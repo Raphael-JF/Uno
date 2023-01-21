@@ -9,4 +9,4 @@ if __name__ == "__main__":
     
 
 # idées dev
-# pour les parametres on pourra mettre résolution, fps, qualité 
+# pour les parametres on pourra mettre résolution, fps, qualité
