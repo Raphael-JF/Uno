@@ -110,4 +110,9 @@ class Transition():
                 sortie.append(temp)
         return sortie
 
+
+    def reset_index(self):
+
+        self.index = 0
+
         

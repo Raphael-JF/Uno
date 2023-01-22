@@ -8,7 +8,7 @@ from classes.timer import Timer
 from classes.splash_title import Splash_title
 from classes.box import Box
 from classes.image import Image
-from classes.title import Title
+from classes.player_name import Player_name
 from classes.deck import Deck
 from classes.card import Card
 from classes.game import Game
@@ -84,7 +84,7 @@ splash_title3 = Splash_title(
     dismiss_ease = [0.5,'out'],
 )
 
-pseudo1 = Title(
+pseudo1 = Player_name(
     winsize = assets.BASE_SIZE,
     loc = [[400,310],'center'],
     background_clr = (191, 23, 29),
@@ -97,7 +97,7 @@ pseudo1 = Title(
     layer = 2,
 )
 
-pseudo2 = Title(
+pseudo2 = Player_name(
     winsize = assets.BASE_SIZE,
     loc = [[570,200],'center'],
     background_clr = (191, 23, 29),
@@ -110,7 +110,7 @@ pseudo2 = Title(
     layer = 2,
 )
 
-pseudo3 = Title(
+pseudo3 = Player_name(
     winsize = assets.BASE_SIZE,
     loc = [[400,90],'center'],
     background_clr = (191, 23, 29),
@@ -123,7 +123,7 @@ pseudo3 = Title(
     layer = 2,
 )
 
-pseudo4 = Title(
+pseudo4 = Player_name(
     winsize = assets.BASE_SIZE,
     loc = [[230,200],'center'],
     background_clr = (191, 23, 29),
@@ -135,7 +135,7 @@ pseudo4 = Title(
     font_family = "RopaSans-Regular.ttf",
     layer = 2,
 )
-
+pseudos = [pseudo1,pseudo2,pseudo3,pseudo4]
 
 all_group.add([background,pioche,pseudo1,pseudo2,pseudo3,pseudo4])
 to_draw_group.add([background,pioche,pseudo1,pseudo2,pseudo3,pseudo4])
@@ -174,6 +174,8 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
         for i,(name,mode) in enumerate(game_infos.items()):
             temp_decks[i].set_infos(mode,name)
             temp_decks[i].draw_cards(7,False)
+        update_pseudos()
+
 
     cursor = pygame.mouse.get_pos()
 
@@ -189,6 +191,7 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
     if played_card:
         game.card_played(played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
         deck1.lower()
+        pseudo1.set_highlight()
         timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS,"flip_deck1"))
         timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS + assets.CARDS_REVERSE_ANIMATION_SECONDS[0]*2 + 0.5,"appear_splash_titles"))
         
@@ -234,6 +237,7 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
                     splash_title3.dismiss()
                     timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS,"flip_deck1"))
                     deck1.elevate()
+                    pseudo1.set_highlight()
 
             if event.key == pygame.K_a:
                 deck1.draw_cards(1,True)
@@ -257,26 +261,14 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
                 
     if game_infos != None:
         first_card.add_timer(Timer(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS/2,'flip',[assets.CARDS_REVERSE_ANIMATION_SECONDS,['in','out']]))
-        game.card_played(first_card,assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS,'out')        
+        game.card_played(first_card,assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS,'out') 
 
     
 
 def timer_handling(id,infos = None):
 
     if id == "appear_splash_titles":
-        if clockwise_direction:
-            splash_title2.change_text(deck4.get_infos()[1])
-            pseudo1.set_text(deck4.get_infos()[1])
-            pseudo2.set_text(deck1.get_infos()[1])
-            pseudo3.set_text(deck2.get_infos()[1])
-            pseudo4.set_text(deck3.get_infos()[1])
-        else:
-            splash_title2.change_text(deck2.get_infos()[1])
-            pseudo1.set_text(deck2.get_infos()[1])
-            pseudo2.set_text(deck3.get_infos()[1])
-            pseudo3.set_text(deck4.get_infos()[1])
-            pseudo4.set_text(deck1.get_infos()[1])
-        
+        update_pseudos()
         splash_title1.appear()
         splash_title2.appear()
         splash_title3.appear()
@@ -284,6 +276,22 @@ def timer_handling(id,infos = None):
     if id == "flip_deck1":
         deck1.flip_cards()
     
+
+def update_pseudos():
+
+    if clockwise_direction:
+        splash_title2.change_text(deck4.get_infos()[1])
+        pseudo1.set_text(deck4.get_infos()[1])
+        pseudo2.set_text(deck1.get_infos()[1])
+        pseudo3.set_text(deck2.get_infos()[1])
+        pseudo4.set_text(deck3.get_infos()[1])
+    else:
+        splash_title2.change_text(deck2.get_infos()[1])
+        pseudo1.set_text(deck2.get_infos()[1])
+        pseudo2.set_text(deck3.get_infos()[1])
+        pseudo3.set_text(deck4.get_infos()[1])
+        pseudo4.set_text(deck1.get_infos()[1])
+
 
 def swap_decks():
     
