@@ -38,17 +38,17 @@ pioche = Image(
 splash_title1 = Splash_title(
     winsize = assets.BASE_SIZE,
     text_center = [400,175],
-    background_clr = (0,0,0,150),
+    background_clr = (0,0,0,205),
     font_clrs = [(250,250,250),(250,250,250)],
     font_size = 64,
     start_y = 125,
     parent_groups = (all_group,to_draw_group),
-    appearing_ease = [1,'out'],
+    appearing_ease = [0.75,'out'],
     alive_at_start = True,
     text = "Au tour de",
     font_family = "RopaSans-Regular.ttf",
     layer = 5000,
-    dismiss_ease = [0.25,'out'],
+    dismiss_ease = [0.5,'out'],
 )
 
 splash_title2 = Splash_title(
@@ -59,12 +59,12 @@ splash_title2 = Splash_title(
     font_size = 64,
     start_y = 125,
     parent_groups = (all_group,to_draw_group),
-    appearing_ease = [1,'out'],
+    appearing_ease = [0.75,'out'],
     alive_at_start = True,
     text = "JOUEUR 1",
     font_family = "RopaSans-Regular.ttf",
     layer = 5000,
-    dismiss_ease = [0.25,'out'],
+    dismiss_ease = [0.5,'out'],
 )
 splash_title3 = Splash_title(
     winsize = assets.BASE_SIZE,
@@ -74,12 +74,12 @@ splash_title3 = Splash_title(
     font_size = 30,
     start_y = 400,
     parent_groups = (all_group,to_draw_group),
-    appearing_ease = [1,'out'],
+    appearing_ease = [0.75,'out'],
     alive_at_start = True,
     text = "Appuyez sur [Espace] pour jouer",
     font_family = "RopaSans-Regular.ttf",
     layer = 5000,
-    dismiss_ease = [0.25,'out'],
+    dismiss_ease = [0.5,'out'],
 )
 
 
@@ -123,7 +123,11 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
 
     cursor = pygame.mouse.get_pos()
 
-    hovered_card = (cards_group.get_sprites_at(cursor) or [None])[-1]
+    hovered_card:Card = (cards_group.get_sprites_at(cursor) or [None])[-1]
+    if hovered_card:
+        if hovered_card.get_face() == "hidden":
+            hovered_card = None
+
     for deck in decks:
         deck.update(new_winsize,dt,fps,cursor,hovered_card)
     played_card = deck1.get_played_card()
@@ -158,17 +162,16 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
             sys.exit()
         
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button in (pygame.BUTTON_LEFT,pygame.BUTTON_RIGHT):
+            if event.button in (pygame.BUTTON_LEFT,pygame.BUTTON_RIGHT) and not splash_title1.alive():
                 if hovered_card:
                     hovered_card.set_clicking(True)
         
-        if event.type == pygame.MOUSEBUTTONUP:
+        if event.type == pygame.MOUSEBUTTONUP and not splash_title1.alive():
             if event.button in (pygame.BUTTON_LEFT,pygame.BUTTON_LEFT):
                 if hovered_card:
                     hovered_card.set_clicking(False)
 
         if event.type == pygame.KEYDOWN:
-
             if event.key == pygame.K_SPACE:
                 if splash_title1.get_state() in ["showed","appearing"]:
                     swap_decks()
@@ -222,6 +225,7 @@ def swap_decks():
     infos2 = deck2.get_infos()
     infos3 = deck3.get_infos()
     infos4 = deck4.get_infos()
+    print(infos4)
 
     cartes1 = deck1.get_cards()
     cartes2 = deck2.get_cards()

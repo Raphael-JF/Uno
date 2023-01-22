@@ -148,54 +148,6 @@ class Deck():
         duree_avant_tri = number_of_cards*assets.CARDS_DRAWING_DELAY_SECONDS + assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS
         self.timers.append(Timer(duree_avant_tri,'arrange'))
 
-        # valeur = self.draw_pile.pop(random.randint(0,len(self.draw_pile)-1))
-
-        # if len(self.draw_pile) == 0:
-        #     self.draw_pile = assets.ALL_CARDS[:]
-        
-        # layer = 10+len(self.cartes)
-
-        # x,y = assets.DRAW_PILE_CENTER
-        # w,h = assets.CARD_SIZE
-
-        # if self.deck_degrees == 0:
-        #     placement_mode = "midtop"
-        #     pos = [x, y - h/2]
-        # elif self.deck_degrees == 90:
-        #     placement_mode = "midleft"
-        #     pos = [x - w/2, y]
-        # elif self.deck_degrees == 180:
-        #     placement_mode = "midbottom"
-        #     pos = [x, y + h/2]
-        # elif self.deck_degrees == 270:
-        #     placement_mode = "midright"
-        #     pos = [x + w/2, y]
-
-        # carte = Card([pos,placement_mode],valeur,layer,self)
-        # for group in self.sprites_group:
-        #     group.add(carte)
-
-        # if self.showed:
-        #     carte.add_timer(Timer(assets.CARDS_DRAWING_DELAY_BEFORE_FLIP,'flip',[assets.CARDS_REVERSE_ANIMATION_SECONDS,['in','out']]))
-
-        # self.cartes.append(carte)
-        
-
-        # if number_of_cards > 1:
-        #     self.rotate_cards()
-        #     self.shift_cards(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS,'out')
-        #     self.timers.append(Timer(assets.CARDS_DRAWING_DELAY_SECONDS,"draw_card",[number_of_cards-1,sort_now]))
-        
-        # if number_of_cards == 1 and not sort_now:
-        #     self.rotate_cards()
-        #     self.shift_cards(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS,'out')
-        #     # self.timers.append(Timer(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS,'arrange'))
-        
-        # if sort_now:
-        #     self.arrange()
-        #     self.rotate_cards()
-        #     self.shift_cards(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS,'out')
-                
 
     def flip_cards(self):
 

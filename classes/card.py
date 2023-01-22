@@ -255,6 +255,8 @@ class Card(pygame.sprite.Sprite):
         if ease_seconds == 0:
             self.pos = pos
             self.calc_card()
+            if "moving" in self.states:
+                self.states.remove("moving")
             return
         
         if "moving" not in self.states:
@@ -285,6 +287,8 @@ class Card(pygame.sprite.Sprite):
         if ease_seconds == 0:
             self.degrees = degrees
             self.calc_card()
+            if "rotating" in self.states:
+                self.states.remove("rotating")
             return
 
         if "rotating" not in self.states:
@@ -371,7 +375,7 @@ class Card(pygame.sprite.Sprite):
 
     def set_clicking(self,clicking):
 
-        if self.face == "showed" and self.parent_deck:
+        if self.face == "showed" and self.parent_deck and "flipping" not in self.states :
             self.clicking = clicking
 
         if self.clicking and "flipping" not in self.states:
@@ -398,4 +402,7 @@ class Card(pygame.sprite.Sprite):
         del(self)
         return surf,rect
 
+
+    def get_face(self):
+        return self.face
 
