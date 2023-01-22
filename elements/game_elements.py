@@ -8,6 +8,7 @@ from classes.timer import Timer
 from classes.splash_title import Splash_title
 from classes.box import Box
 from classes.image import Image
+from classes.title import Title
 from classes.deck import Deck
 from classes.card import Card
 from classes.game import Game
@@ -24,6 +25,7 @@ background = Box(
     loc = [[0,0],"topleft"],
     background_clr=(191, 23, 29),
     border = [-1,(0,0,0),0,"inset"],
+    layer=1,
 )
 
 pioche = Image(
@@ -82,9 +84,61 @@ splash_title3 = Splash_title(
     dismiss_ease = [0.5,'out'],
 )
 
+pseudo1 = Title(
+    winsize = assets.BASE_SIZE,
+    loc = [[400,310],'center'],
+    background_clr = (191, 23, 29),
+    font_clrs = [[255, 237, 238]],
+    font_size = 25,
+    border = [-1,(0,0,0),0,'inset'],
+    size = [133,27],
+    text = "Joueur 1",
+    font_family = "RopaSans-Regular.ttf",
+    layer = 2,
+)
 
-all_group.add([background,pioche])
-to_draw_group.add([background,pioche])
+pseudo2 = Title(
+    winsize = assets.BASE_SIZE,
+    loc = [[570,200],'center'],
+    background_clr = (191, 23, 29),
+    font_clrs = [[255, 237, 238]],
+    font_size = 25,
+    border = [-1,(0,0,0),0,'inset'],
+    size = [133,27],
+    text = "Joueur 2",
+    font_family = "RopaSans-Regular.ttf",
+    layer = 2,
+)
+
+pseudo3 = Title(
+    winsize = assets.BASE_SIZE,
+    loc = [[400,90],'center'],
+    background_clr = (191, 23, 29),
+    font_clrs = [[255, 237, 238]],
+    font_size = 25,
+    border = [-1,(0,0,0),0,'inset'],
+    size = [133,27],
+    text = "Joueur 3",
+    font_family = "RopaSans-Regular.ttf",
+    layer = 2,
+)
+
+pseudo4 = Title(
+    winsize = assets.BASE_SIZE,
+    loc = [[230,200],'center'],
+    background_clr = (191, 23, 29),
+    font_clrs = [[255, 237, 238]],
+    font_size = 25,
+    border = [-1,(0,0,0),0,'inset'],
+    size = [133,27],
+    text = "Joueur 4",
+    font_family = "RopaSans-Regular.ttf",
+    layer = 2,
+)
+
+
+all_group.add([background,pioche,pseudo1,pseudo2,pseudo3,pseudo4])
+to_draw_group.add([background,pioche,pseudo1,pseudo2,pseudo3,pseudo4])
 
 deck1 = Deck(assets.BASE_SIZE,0,assets.DECK1_MIDTOP,400,[all_group,to_draw_group,cards_group],False)
 deck2 = Deck(assets.BASE_SIZE,90,assets.DECK2_MIDTOP,225,[all_group,to_draw_group,cards_group],False)
@@ -97,7 +151,7 @@ game = Game()
 all_group.add(game)
 to_draw_group.add(game)
 
-first_card = Card([assets.DRAW_PILE_CENTER,'midtop'],random.choice(assets.SIMPLE_CARDS),0,None)
+first_card = Card([assets.DRAW_PILE_CENTER,'midtop'],random.choice(assets.SIMPLE_CARDS),2,None)
 cards_group.add(first_card)
 all_group.add(first_card)
 to_draw_group.add(first_card)
@@ -210,7 +264,19 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
 def timer_handling(id,infos = None):
 
     if id == "appear_splash_titles":
-        splash_title2.change_text(decks[1].get_infos()[1])
+        if clockwise_direction:
+            splash_title2.change_text(deck4.get_infos()[1])
+            pseudo1.set_text(deck4.get_infos()[1])
+            pseudo2.set_text(deck1.get_infos()[1])
+            pseudo3.set_text(deck2.get_infos()[1])
+            pseudo4.set_text(deck3.get_infos()[1])
+        else:
+            splash_title2.change_text(deck2.get_infos()[1])
+            pseudo1.set_text(deck2.get_infos()[1])
+            pseudo2.set_text(deck3.get_infos()[1])
+            pseudo3.set_text(deck4.get_infos()[1])
+            pseudo4.set_text(deck1.get_infos()[1])
+        
         splash_title1.appear()
         splash_title2.appear()
         splash_title3.appear()
@@ -225,7 +291,6 @@ def swap_decks():
     infos2 = deck2.get_infos()
     infos3 = deck3.get_infos()
     infos4 = deck4.get_infos()
-    print(infos4)
 
     cartes1 = deck1.get_cards()
     cartes2 = deck2.get_cards()
@@ -253,6 +318,10 @@ def swap_decks():
         deck2.set_infos(*infos3)
         deck3.set_infos(*infos4)
         deck4.set_infos(*infos1)
+        pseudo1.set_text(infos2[1])
+        pseudo2.set_text(infos3[1])
+        pseudo3.set_text(infos4[1])
+        pseudo4.set_text(infos1[1])
 
     deck1.shift_cards(0,"inout")
     deck2.shift_cards(0,"inout")

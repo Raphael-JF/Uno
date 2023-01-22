@@ -125,4 +125,10 @@ class Title(Box):
         self.text_align[0] = self.text_align[0]*self.ratio
 
         self.calc_title()
+    
+
+    def set_text(self,text:str):
+
+        self.texte = text
+        self.calc_title()
 

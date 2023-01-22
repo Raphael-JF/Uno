@@ -14,6 +14,7 @@ class Game(pygame.sprite.Sprite):
         self.width = assets.GAME_PILE_SIZE[0]
         self.height = assets.GAME_PILE_SIZE[1]
         self.timers:list[Timer] = []
+        self._layer = 2
 
         self.calc_surf()
 
