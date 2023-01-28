@@ -37,6 +37,16 @@ pioche = Image(
     layer=9
 )
 
+dark_background = Box(
+    winsize = assets.BASE_SIZE,
+    size = [802,452],
+    loc = [[0,0],"topleft"],
+    background_clr=(0, 0, 0, 125),
+    border = [-1,(0,0,0),0,"inset"],
+    layer=5000,
+)
+
+
 splash_title1 = Splash_title(
     winsize = assets.BASE_SIZE,
     text_center = [400,175],

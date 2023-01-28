@@ -241,6 +241,14 @@ class Card(pygame.sprite.Sprite):
             self.flip(*infos)
 
 
+    def set_wild_color(self,color:str):
+
+        if self.value in ["wild","4wild"]:
+            self.color = color
+            self.showed_face = pygame.image.load(os.path.join(os.getcwd(),'images','cartes',color+self.value+'.png'))
+            self.calc_card()
+
+
     def change_face(self):
 
         if self.face == "showed":
