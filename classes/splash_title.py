@@ -13,21 +13,20 @@ class Splash_title(Box):
         font_clrs: list,
         font_size: int,
         start_y:int,
-        parent_groups:list[pygame.sprite.Group|pygame.sprite.LayeredUpdates],
+        parent_groups:list,
         text_alpha:int = 255,
         appearing_ease:list[int,str] = [0,'linear'],
-        alive_at_start = False,
         text: str = "",
         font_family: str = "Arial", 
         layer: int = 0, 
         underline: bool = False,
         dismiss_ease:list[int,str] = [0,'linear'],
         seconds_before_dismiss:int|float = 0,
+        living:bool = True
     ):
 
-        super().__init__(winsize=winsize,size=winsize,loc=[[0,0],"topleft"],background_clr=background_clr,layer=layer)
+        super().__init__(winsize=winsize,size=winsize,loc=[[0,0],"topleft"],background_clr=background_clr,layer=layer,parent_groups=parent_groups,living = living)
 
-        self.parent_groups = parent_groups
         self.appearing_seconds, self.appearing_mode = appearing_ease
         self.dismiss_seconds, self.dismiss_mode = dismiss_ease
         self.seconds_before_dismiss = seconds_before_dismiss
@@ -45,15 +44,12 @@ class Splash_title(Box):
         self.cur_text_center = text_center[:]
         self.base_text_center = text_center[:]
 
-        self.state = None
+        self.state = "hidden"
         self.timers = []
 
         self.background_alpha_frames = Transition([0,self.start_background_alpha],[self.appearing_seconds],[self.appearing_mode])
         self.text_alpha_frames = Transition([0,self.start_text_alpha],[self.appearing_seconds],[self.appearing_mode])
         self.y_frames = Transition([self.start_y,self.rect.centery],[self.appearing_seconds],[self.appearing_mode])
-
-        if alive_at_start:
-            self.alive()
 
         self.calc_text()
         
@@ -157,25 +153,12 @@ class Splash_title(Box):
             self.cur_background_clr[-1], _ , _ = self.background_alpha_frames.change_index(dt,self.cur_background_clr[-1])
             self.text_alpha, recalc_needed, finish = self.text_alpha_frames.change_index(dt,self.text_alpha)
 
-
-            
             if recalc_needed :
                 self.calc_pos()
 
             if finish:
                 self.state = "hidden"
                 self.kill()
-
-
-    def liven(self):
-        """
-        A l'inverse de kill() (méthode de pygame.sprite.Sprite permettant de suppprimer le sprite de tous les groupes dans lesquels il se trouve), ajoute le sprite à tous ses groupes parents.
-        """
-
-        for group in self.parent_groups:
-            group.add(self)
-        self.state = "hidden"
-
 
     def appear(self):
 

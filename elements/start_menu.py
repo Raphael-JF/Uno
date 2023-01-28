@@ -8,6 +8,9 @@ from classes.box import Box
 from classes.button import Button
 from classes.image import Image
 
+all_group = pygame.sprite.Group()
+to_draw_group = pygame.sprite.LayeredUpdates()
+clickable_group = pygame.sprite.LayeredUpdates()
 
 background = Box(
     winsize = assets.BASE_SIZE,
@@ -15,6 +18,7 @@ background = Box(
     loc = [[0,0],"topleft"],
     background_clr=(191, 23, 29),
     border = [-1,(0,0,0),0,"inset"],
+    parent_groups = [all_group, to_draw_group],
 )
 
 title = Image(
@@ -23,7 +27,8 @@ title = Image(
     scale_axis = ['y',150],
     loc = [[400,20],"midtop"],
     border = [0,(0,0,0,0)],
-    layer = 1
+    layer = 1,
+    parent_groups = [all_group, to_draw_group],
 )
 
 charger_partie = Button(
@@ -42,7 +47,8 @@ charger_partie = Button(
     hov_border=[2,(25,25,25),0],
     active_background_clr=(210,210,210),
     active_border=[3,(25,25,25),0],
-    layer = 1
+    layer = 1,
+    parent_groups = [all_group, to_draw_group, clickable_group],
 )
 
 nouvelle_partie = Button(
@@ -61,7 +67,8 @@ nouvelle_partie = Button(
     hov_border=[2,(25,25,25),0],
     active_background_clr=(210,210,210),
     active_border=[3,(25,25,25),0],
-    layer = 1
+    layer = 1,
+    parent_groups = [all_group, to_draw_group, clickable_group],
 )
 
 options = Button(
@@ -80,7 +87,8 @@ options = Button(
     hov_border=[2,(25,25,25),0],
     active_background_clr=(210,210,210),
     active_border=[3,(25,25,25),0],
-    layer = 1
+    layer = 1,
+    parent_groups = [all_group, to_draw_group, clickable_group],
 )
 
 credits = Button(
@@ -99,7 +107,8 @@ credits = Button(
     hov_border=[2,(25,25,25),0],
     active_background_clr=(210,210,210),
     active_border=[3,(25,25,25),0],
-    layer = 1
+    layer = 1,
+    parent_groups = [all_group, to_draw_group, clickable_group],
 )
 
 quitter = Button(
@@ -118,20 +127,9 @@ quitter = Button(
     hov_border=[2,(25,25,25),0],
     active_background_clr=(210,210,210),
     active_border=[3,(25,25,25),0],
-    layer = 1
+    layer = 1,
+    parent_groups = [all_group, to_draw_group, clickable_group],
 )
-
-
-all_group = pygame.sprite.Group()
-all_group.add([background,title,charger_partie,nouvelle_partie,options,credits,quitter])
-
-to_draw_group = pygame.sprite.LayeredUpdates()
-to_draw_group.add([background,title,charger_partie,nouvelle_partie,options,credits,quitter])
-
-clickable_group = pygame.sprite.LayeredUpdates()
-clickable_group.add([charger_partie,nouvelle_partie,options,credits,quitter])
-
-
 
 
 def loop(screen,new_winsize, dt,fps):
@@ -141,11 +139,11 @@ def loop(screen,new_winsize, dt,fps):
     hovered_button = (clickable_group.get_sprites_at(cursor) or [None])[-1]
 
     all_group.update(
-                new_winsize = new_winsize, 
-                dt = dt, 
-                fps = fps,
-                cursor = cursor
-            )
+        new_winsize = new_winsize, 
+        dt = dt, 
+        fps = fps,
+        cursor = cursor
+    )
     to_draw_group.draw(screen)
     pygame.display.flip()
     

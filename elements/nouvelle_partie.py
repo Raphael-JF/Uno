@@ -7,9 +7,13 @@ pygame.init()
 from classes.box import Box
 from classes.title import Title
 from classes.button import Button
-from classes.image import Image
 from classes.input_field import Input_field
 from classes.button_family import Button_family
+
+all_group = pygame.sprite.Group()
+to_draw_group = pygame.sprite.LayeredUpdates()
+clickable_group = pygame.sprite.LayeredUpdates()
+fields_group = pygame.sprite.LayeredUpdates()
 
 background = Box(
     winsize = assets.BASE_SIZE,
@@ -17,6 +21,7 @@ background = Box(
     loc = [[0,0],"topleft"],
     background_clr=(191, 23, 29),
     border = [-1,(0,0,0),0,"inset"],
+    parent_groups = [all_group,to_draw_group]
 )
 
 title = Title(
@@ -29,7 +34,8 @@ title = Title(
     font_clrs = [(25,25,25)],
     font_size = 40,
     font_family = "RopaSans-Regular.ttf",
-    layer = 1
+    layer = 1,
+    parent_groups = [all_group,to_draw_group]
 )
 
 annuler = Button(
@@ -48,7 +54,9 @@ annuler = Button(
     hov_border=[2,(25,25,25),0],
     active_background_clr=(210,210,210),
     active_border=[3,(25,25,25),0],
-    layer = 1
+    layer = 1,
+    parent_groups = [all_group,to_draw_group,clickable_group]
+    
 )
 
 creer_partie = Button(
@@ -67,7 +75,8 @@ creer_partie = Button(
     hov_border=[2,(25,25,25),0],
     active_background_clr=(210,210,210),
     active_border=[3,(25,25,25),0],
-    layer = 1
+    layer = 1,
+    parent_groups = [all_group,to_draw_group,clickable_group]
 )
 
 # Joueur 1
@@ -77,7 +86,8 @@ conteneur_j1 = Box(
     size = [275,75],
     border = [2,(25,25,25),2,"inset"],
     background_clr = (250,250,250),
-    layer = 1
+    layer = 1,
+    parent_groups = [all_group,to_draw_group]
 )
 champ_j1 = Input_field(
     winsize = assets.BASE_SIZE,
@@ -97,6 +107,7 @@ champ_j1 = Input_field(
     active_border = [2,(0,0,0),0],
     ease_mode="inout",
     ease_seconds=0.25,
+    parent_groups = [all_group,to_draw_group,clickable_group,fields_group]
 )
 ordi_j1 = Button(
     winsize = assets.BASE_SIZE,
@@ -111,6 +122,7 @@ ordi_j1 = Button(
     layer = 2,
     ease_mode = "inout",
     ease_seconds= 0.3,
+    parent_groups = [all_group,to_draw_group,clickable_group]
 )
 humain_j1 = Button(
     winsize = assets.BASE_SIZE,
@@ -125,6 +137,7 @@ humain_j1 = Button(
     layer = 2,
     ease_mode = "inout",
     ease_seconds= 0.3,
+    parent_groups = [all_group,to_draw_group,clickable_group]
 )
 
 
@@ -135,7 +148,8 @@ conteneur_j2 = Box(
     size = [275,75],
     border = [2,(25,25,25),2,"inset"],
     background_clr = (250,250,250),
-    layer = 1
+    layer = 1,
+    parent_groups = [all_group,to_draw_group]
 )
 champ_j2 = Input_field(
     winsize = assets.BASE_SIZE,
@@ -155,6 +169,7 @@ champ_j2 = Input_field(
     active_border = [2,(0,0,0),0],
     ease_mode="inout",
     ease_seconds=0.25,
+    parent_groups = [all_group,to_draw_group,clickable_group,fields_group]
 )
 ordi_j2 = Button(
     winsize = assets.BASE_SIZE,
@@ -169,6 +184,7 @@ ordi_j2 = Button(
     layer = 2,
     ease_mode = "inout",
     ease_seconds= 0.3,
+    parent_groups = [all_group,to_draw_group,clickable_group]
 )
 humain_j2 = Button(
     winsize = assets.BASE_SIZE,
@@ -183,6 +199,7 @@ humain_j2 = Button(
     layer = 2,
     ease_mode = "inout",
     ease_seconds= 0.3,
+    parent_groups = [all_group,to_draw_group,clickable_group]
 )
 
 
@@ -193,7 +210,8 @@ conteneur_j3 = Box(
     size = [275,75],
     border = [2,(25,25,25),2,"inset"],
     background_clr = (250,250,250),
-    layer = 1
+    layer = 1,
+    parent_groups = [all_group,to_draw_group]
 )
 champ_j3 = Input_field(
     winsize = assets.BASE_SIZE,
@@ -213,6 +231,7 @@ champ_j3 = Input_field(
     active_border = [2,(0,0,0),0],
     ease_mode="inout",
     ease_seconds=0.25,
+    parent_groups = [all_group,to_draw_group,clickable_group,fields_group]
 )
 ordi_j3 = Button(
     winsize = assets.BASE_SIZE,
@@ -227,6 +246,7 @@ ordi_j3 = Button(
     layer = 2,
     ease_mode = "inout",
     ease_seconds= 0.3,
+    parent_groups = [all_group,to_draw_group,clickable_group]
 )
 humain_j3 = Button(
     winsize = assets.BASE_SIZE,
@@ -241,6 +261,7 @@ humain_j3 = Button(
     layer = 2,
     ease_mode = "inout",
     ease_seconds= 0.3,
+    parent_groups = [all_group,to_draw_group,clickable_group]
 )
 
 
@@ -251,7 +272,8 @@ conteneur_j4 = Box(
     size = [275,75],
     border = [2,(25,25,25),2,"inset"],
     background_clr = (250,250,250),
-    layer = 1
+    layer = 1,
+    parent_groups = [all_group,to_draw_group]
 )
 champ_j4 = Input_field(
     winsize = assets.BASE_SIZE,
@@ -271,6 +293,7 @@ champ_j4 = Input_field(
     active_border = [2,(0,0,0),0],
     ease_mode="inout",
     ease_seconds=0.25,
+    parent_groups = [all_group,to_draw_group,clickable_group,fields_group],
 )
 ordi_j4 = Button(
     winsize = assets.BASE_SIZE,
@@ -285,6 +308,7 @@ ordi_j4 = Button(
     layer = 2,
     ease_mode = "inout",
     ease_seconds= 0.3,
+    parent_groups = [all_group,to_draw_group,clickable_group]
 )
 humain_j4 = Button(
     winsize = assets.BASE_SIZE,
@@ -299,6 +323,7 @@ humain_j4 = Button(
     layer = 2,
     ease_mode = "inout",
     ease_seconds= 0.3,
+    parent_groups = [all_group,to_draw_group,clickable_group]
 )
 
 
@@ -332,86 +357,86 @@ boutons_familles = [famille_boutons_j1,famille_boutons_j2,famille_boutons_j3,fam
 
 
 
-all_group = pygame.sprite.Group()
-all_group.add([
-    background,
-    title,
-    annuler,
-    creer_partie,
+# all_group = pygame.sprite.Group()
+# all_group.add([
+#     background,
+#     title,
+#     annuler,
+#     creer_partie,
 
-    conteneur_j1,
-    champ_j1,
-    ordi_j1,
-    humain_j1,
+#     conteneur_j1,
+#     champ_j1,
+#     ordi_j1,
+#     humain_j1,
 
-    conteneur_j2,
-    champ_j2,
-    ordi_j2,
-    humain_j2,
+#     conteneur_j2,
+#     champ_j2,
+#     ordi_j2,
+#     humain_j2,
 
-    conteneur_j3,
-    champ_j3,
-    ordi_j3,
-    humain_j3,
+#     conteneur_j3,
+#     champ_j3,
+#     ordi_j3,
+#     humain_j3,
 
-    conteneur_j4,
-    champ_j4,
-    ordi_j4,
-    humain_j4,
+#     conteneur_j4,
+#     champ_j4,
+#     ordi_j4,
+#     humain_j4,
     
-])
+# ])
 
-to_draw_group = pygame.sprite.LayeredUpdates()
-to_draw_group.add([
-    background,
-    title,
-    annuler,
-    creer_partie,
+# to_draw_group = pygame.sprite.LayeredUpdates()
+# to_draw_group.add([
+#     background,
+#     title,
+#     annuler,
+#     creer_partie,
 
-    conteneur_j1,
-    champ_j1,
-    ordi_j1,
-    humain_j1,
+#     conteneur_j1,
+#     champ_j1,
+#     ordi_j1,
+#     humain_j1,
 
-    conteneur_j2,
-    champ_j2,
-    ordi_j2,
-    humain_j2,
+#     conteneur_j2,
+#     champ_j2,
+#     ordi_j2,
+#     humain_j2,
 
-    conteneur_j3,
-    champ_j3,
-    ordi_j3,
-    humain_j3,
+#     conteneur_j3,
+#     champ_j3,
+#     ordi_j3,
+#     humain_j3,
 
-    conteneur_j4,
-    champ_j4,
-    ordi_j4,
-    humain_j4,
-])
+#     conteneur_j4,
+#     champ_j4,
+#     ordi_j4,
+#     humain_j4,
+# ])
 
-clickable_group = pygame.sprite.LayeredUpdates()
-clickable_group.add([
-    annuler,
-    creer_partie,
-    champ_j1,
-    ordi_j1,
-    humain_j1,
+# clickable_group = pygame.sprite.LayeredUpdates()
+# clickable_group.add([
+#     annuler,
+#     creer_partie,
+#     champ_j1,
+#     ordi_j1,
+#     humain_j1,
 
-    champ_j2,
-    ordi_j2,
-    humain_j2,
+#     champ_j2,
+#     ordi_j2,
+#     humain_j2,
    
-    champ_j3,
-    ordi_j3,
-    humain_j3,
+#     champ_j3,
+#     ordi_j3,
+#     humain_j3,
     
-    champ_j4,
-    ordi_j4,
-    humain_j4,
-])
+#     champ_j4,
+#     ordi_j4,
+#     humain_j4,
+# ])
 
-fields_group = pygame.sprite.LayeredUpdates()
-fields_group.add([champ_j1,champ_j2,champ_j3,champ_j4])
+# fields_group = pygame.sprite.LayeredUpdates()
+# fields_group.add([champ_j1,champ_j2,champ_j3,champ_j4])
 
 
 

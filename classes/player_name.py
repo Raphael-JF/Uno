@@ -10,15 +10,17 @@ class Player_name(Title):
         background_clr:tuple,
         font_clrs:list,
         font_size:int,
+        parent_groups:list,
         border:list = [-1,(0,0,0),0,"inset"],
         size:list = [None,None],
         text:str = "",
         font_family:str = "Arial",
         text_align:list = [0,"center"],
         layer:int = 0,
-        underline:bool = False
+        underline:bool = False,
+        living:bool = True,
     ):
-        super().__init__(winsize,loc,background_clr,font_clrs,font_size,border,size,text,font_family,text_align,layer,underline)
+        super().__init__(winsize,loc,background_clr,font_clrs,font_size,parent_groups,border,size,text,font_family,text_align,layer,underline,living)
 
         self.base_width = self.width
         self.base_height = self.height

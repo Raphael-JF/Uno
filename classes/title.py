@@ -12,13 +12,15 @@ class Title(Box):
         background_clr:tuple,
         font_clrs:list,
         font_size:int,
+        parent_groups:list,
         border:list = [-1,(0,0,0),0,"inset"],
         size:list = [None,None],
         text:str = "",
         font_family:str = "Arial",
         text_align:list = [0,"center"],
         layer:int = 0,
-        underline:bool = False
+        underline:bool = False,
+        living:bool = True
     ):
         """
         text = texte à afficher (retour-chariot permis)
@@ -38,7 +40,9 @@ class Title(Box):
             loc = loc,
             background_clr = background_clr,
             border = border,
-            layer = layer
+            living = living,
+            layer = layer,
+            parent_groups = parent_groups
         )
 
         self.underline = underline

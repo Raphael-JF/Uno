@@ -32,11 +32,11 @@ class Game(pygame.sprite.Sprite):
         dest_midtop = [random.randint(*dest_midtop_x_extremums),random.randint(*dest_midtop_y_extremums)-card.height//2]
         degrees = round(random.uniform(-7.5,7.5),2)
         dep_midtop = list(card.pos)
-        dep_midtop[1] -= card.height//2
         
         card.move_a_to_b(dep_midtop,dest_midtop,ease_seconds,ease_mode)
         card.rotate(degrees,ease_seconds,ease_mode)
-        self.timers.append(Timer(ease_seconds,'nullify',[card]))
+        if card.get_value() not in ["wild","4wild"]:
+            self.timers.append(Timer(ease_seconds,'nullify',[card]))
 
     def update(self,new_winsize,dt,fps,cursor):
 

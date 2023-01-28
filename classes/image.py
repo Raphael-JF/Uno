@@ -8,9 +8,11 @@ class Image(pygame.sprite.Sprite):
         winsize:list,
         scale_axis:list,
         loc:list,
+        parent_groups:list,
         degrees:int = 0,
         border:list = [-1,(0,0,0)],
-        layer:int = 0
+        layer:int = 0,
+        living:bool = True,
     ):
         """
         winsize = [width:int,height:int] -> taille fenetre pygame
@@ -31,6 +33,7 @@ class Image(pygame.sprite.Sprite):
         self._layer = layer
         self.pos = loc[0]
         self.placement_mode = loc[1]
+        self.parent_groups = parent_groups
         
         if len(border[1]) != 4:
             border[1] = list(border[1])
@@ -54,6 +57,13 @@ class Image(pygame.sprite.Sprite):
 
         else:
             raise ValueError("scale_axis[0] doit être 'x' ou 'y'")
+
+        if living:
+            self.liven()
+
+    def liven(self):
+        for group in self.parent_groups:
+            group.add(self)
 
 
     def calc_image(self):

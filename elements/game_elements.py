@@ -3,7 +3,7 @@ Ce module contient les éléments et widgets du menu jeu. Il contient aussi le c
 """
 
 import random
-import pygame,assets,sys,itertools
+import pygame,assets,sys
 from classes.timer import Timer
 from classes.splash_title import Splash_title
 from classes.box import Box
@@ -26,6 +26,7 @@ background = Box(
     background_clr=(191, 23, 29),
     border = [-1,(0,0,0),0,"inset"],
     layer=1,
+    parent_groups = [all_group,to_draw_group]
 )
 
 pioche = Image(
@@ -34,7 +35,8 @@ pioche = Image(
     degrees=assets.DRAW_PILE_DEGREES,
     scale_axis=['y',assets.CARD_SIZE[1]],
     loc=[assets.DRAW_PILE_CENTER,"center"],
-    layer=9
+    layer=9,
+    parent_groups = [all_group,to_draw_group]
 )
 
 dark_background = Box(
@@ -44,6 +46,7 @@ dark_background = Box(
     background_clr=(0, 0, 0, 125),
     border = [-1,(0,0,0),0,"inset"],
     layer=5000,
+    parent_groups = [all_group,to_draw_group]
 )
 
 
@@ -54,13 +57,13 @@ splash_title1 = Splash_title(
     font_clrs = [(250,250,250),(250,250,250)],
     font_size = 64,
     start_y = 125,
-    parent_groups = (all_group,to_draw_group),
     appearing_ease = [0.75,'out'],
-    alive_at_start = True,
+    living = False,
     text = "Au tour de",
     font_family = "RopaSans-Regular.ttf",
     layer = 5000,
     dismiss_ease = [0.5,'out'],
+    parent_groups = [all_group,to_draw_group]
 )
 
 splash_title2 = Splash_title(
@@ -70,13 +73,13 @@ splash_title2 = Splash_title(
     font_clrs = [(250,250,250),(250,250,250)],
     font_size = 64,
     start_y = 125,
-    parent_groups = (all_group,to_draw_group),
     appearing_ease = [0.75,'out'],
-    alive_at_start = True,
-    text = "JOUEUR 1",
+    living = False,
+    text = "Joueur 1",
     font_family = "RopaSans-Regular.ttf",
     layer = 5000,
     dismiss_ease = [0.5,'out'],
+    parent_groups = [all_group,to_draw_group]
 )
 splash_title3 = Splash_title(
     winsize = assets.BASE_SIZE,
@@ -85,13 +88,13 @@ splash_title3 = Splash_title(
     font_clrs = [(250,250,250)],
     font_size = 30,
     start_y = 400,
-    parent_groups = (all_group,to_draw_group),
     appearing_ease = [0.75,'out'],
-    alive_at_start = True,
+    living = False,
     text = "Appuyez sur [Espace] pour jouer",
     font_family = "RopaSans-Regular.ttf",
     layer = 5000,
     dismiss_ease = [0.5,'out'],
+    parent_groups = [all_group,to_draw_group]
 )
 
 pseudo1 = Player_name(
@@ -105,6 +108,7 @@ pseudo1 = Player_name(
     text = "Joueur 1",
     font_family = "RopaSans-Regular.ttf",
     layer = 2,
+    parent_groups = [all_group,to_draw_group]
 )
 
 pseudo2 = Player_name(
@@ -118,6 +122,7 @@ pseudo2 = Player_name(
     text = "Joueur 2",
     font_family = "RopaSans-Regular.ttf",
     layer = 2,
+    parent_groups = [all_group,to_draw_group]
 )
 
 pseudo3 = Player_name(
@@ -131,6 +136,7 @@ pseudo3 = Player_name(
     text = "Joueur 3",
     font_family = "RopaSans-Regular.ttf",
     layer = 2,
+    parent_groups = [all_group,to_draw_group]
 )
 
 pseudo4 = Player_name(
@@ -144,6 +150,7 @@ pseudo4 = Player_name(
     text = "Joueur 4",
     font_family = "RopaSans-Regular.ttf",
     layer = 2,
+    parent_groups = [all_group,to_draw_group]
 )
 pseudos = [pseudo1,pseudo2,pseudo3,pseudo4]
 

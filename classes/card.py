@@ -84,7 +84,6 @@ class Card(pygame.sprite.Sprite):
         """
         Recalcul de la surface du sprite, ainsi que son rectangle.
         """
-
         if self.face == "showed":
             self.image = pygame.transform.smoothscale(self.showed_face,(round(self.width*self.resize_ratio),round(self.height*self.resize_ratio)))
         else:
@@ -95,28 +94,25 @@ class Card(pygame.sprite.Sprite):
 
             
         pos = [round(i) for i in self.pos]
-
-        if self.clicking:
+        
+        if self.placement_mode == "topleft":
+            self.rect = self.image.get_rect(topleft=pos)
+        elif self.placement_mode == "topright":
+            self.rect = self.image.get_rect(topright=pos)
+        elif self.placement_mode == "bottomleft":
+            self.rect = self.image.get_rect(bottomleft=pos)
+        elif self.placement_mode == "bottomright":
+            self.rect = self.image.get_rect(bottomright=pos)
+        elif self.placement_mode == "midtop":
+            self.rect = self.image.get_rect(midtop=pos)
+        elif self.placement_mode == "midleft":
+            self.rect = self.image.get_rect(midleft=pos)
+        elif self.placement_mode == "midbottom":
+            self.rect = self.image.get_rect(midbottom=pos)
+        elif self.placement_mode == "midright":
+            self.rect = self.image.get_rect(midright=pos)
+        elif self.placement_mode == "center":
             self.rect = self.image.get_rect(center=pos)
-        else:
-            if self.placement_mode == "topleft":
-                self.rect = self.image.get_rect(topleft=pos)
-            elif self.placement_mode == "topright":
-                self.rect = self.image.get_rect(topright=pos)
-            elif self.placement_mode == "bottomleft":
-                self.rect = self.image.get_rect(bottomleft=pos)
-            elif self.placement_mode == "bottomright":
-                self.rect = self.image.get_rect(bottomright=pos)
-            elif self.placement_mode == "midtop":
-                self.rect = self.image.get_rect(midtop=pos)
-            elif self.placement_mode == "midleft":
-                self.rect = self.image.get_rect(midleft=pos)
-            elif self.placement_mode == "midbottom":
-                self.rect = self.image.get_rect(midbottom=pos)
-            elif self.placement_mode == "midright":
-                self.rect = self.image.get_rect(midright=pos)
-            elif self.placement_mode == "center":
-                self.rect = self.image.get_rect(center=pos)
                 
 
 
@@ -161,7 +157,7 @@ class Card(pygame.sprite.Sprite):
             self.rescale(new_winsize)
             
         if self.clicking and self.face == "showed" and self.parent_deck:
-            self.pos = cursor
+            self.pos = cursor[0], cursor[1] - self.height//2
             if self.center_pile_hitbox_rect.collidepoint(cursor) and not self.center_pile_hitbox_rect.collidepoint(self.last_cursor_pos):
                 self.resize(1,assets.CARD_RESIZE_ANIMATION_SECONDS,'inout')
             if not self.center_pile_hitbox_rect.collidepoint(cursor) and self.center_pile_hitbox_rect.collidepoint(self.last_cursor_pos):
@@ -370,6 +366,7 @@ class Card(pygame.sprite.Sprite):
     def set_placement_mode(self,new_mode):
 
         self.placement_mode = new_mode
+
 
     def set_parent_deck(self,new_deck):
 

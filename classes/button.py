@@ -16,6 +16,7 @@ class Button(Title):
         background_clr:tuple,
         font_clrs:list,
         font_size:int,
+        parent_groups:list,
         border:list = [0,(0,0,0),0,"inset"],
         size:list = [None,None],
         ease_seconds:int = 0,
@@ -27,7 +28,8 @@ class Button(Title):
         hov_border:list = None,
         active_background_clr:tuple = None,
         active_border:tuple = None,
-        layer:int = 0
+        layer:int = 0,
+        living:bool = True
     ):
         """
         ease_seconds = temps d'animation en secondes
@@ -51,7 +53,9 @@ class Button(Title):
             text = text,
             font_family = font_family,
             text_align = text_align,
-            layer = layer
+            layer = layer,
+            living = living,
+            parent_groups = parent_groups
         )
         self.ease_seconds = ease_seconds
         self.ease_mode = ease_mode

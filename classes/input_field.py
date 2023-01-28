@@ -12,6 +12,7 @@ class Input_field(Button):
         winsize:list,
         loc:list,
         font_size:int,
+        parent_groups:list,
         font_family:str = "Arial",
         font_clr:tuple = (0,0,0),
         background_clr:tuple = (255,255,255),
@@ -25,7 +26,8 @@ class Input_field(Button):
         active_background_clr:tuple = None,
         active_border:tuple = None,
         ease_seconds:float = 0,
-        ease_mode:str = "inout"
+        ease_mode:str = "inout",
+        living:bool = True,
     ):
         """
         Pour des informations sur les  attributs, se référer à la docu de Button.__init__()
@@ -50,7 +52,9 @@ class Input_field(Button):
             font_family = font_family,
             hov_background_clr = hov_background_clr,
             hov_border = hov_border,
-            layer = layer
+            layer = layer,
+            parent_groups = parent_groups,
+            living = living
         )
 
         if active_background_clr == None:
