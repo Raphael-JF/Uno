@@ -12,9 +12,11 @@ from classes.player_name import Player_name
 from classes.deck import Deck
 from classes.card import Card
 from classes.game import Game
+from classes.button import Button
 pygame.init()
 
 all_group = pygame.sprite.Group()
+buttons_group = pygame.sprite.LayeredUpdates()
 to_draw_group = pygame.sprite.LayeredUpdates()
 cards_group = pygame.sprite.LayeredUpdates()
 
@@ -46,7 +48,8 @@ dark_background = Box(
     background_clr=(0, 0, 0, 125),
     border = [-1,(0,0,0),0,"inset"],
     layer=5000,
-    parent_groups = [all_group,to_draw_group]
+    parent_groups = [all_group,to_draw_group],
+    living = False
 )
 
 
@@ -154,8 +157,81 @@ pseudo4 = Player_name(
 )
 pseudos = [pseudo1,pseudo2,pseudo3,pseudo4]
 
-all_group.add([background,pioche,pseudo1,pseudo2,pseudo3,pseudo4])
-to_draw_group.add([background,pioche,pseudo1,pseudo2,pseudo3,pseudo4])
+yellow_button = Button(
+    winsize = assets.BASE_SIZE,
+    loc = ((400,225),"topright"),
+    size = (115,115),
+    border = [-1,(255, 244, 2),0,'outset'],
+    hov_border = [10, (255, 244, 2), 0],
+    active_border = [10, (217,210,2),0],
+    background_clr = (255, 244, 2),
+    active_background_clr = (217,210,2),
+    font_clrs = [(25,25,25)],
+    font_size = 22,
+    font_family = "RopaSans-Regular.ttf",
+    layer = 5001,
+    ease_mode = "inout",
+    ease_seconds= 0.3,
+    parent_groups = [all_group,to_draw_group,buttons_group],
+    living = False
+)
+
+red_button = Button(
+    winsize = assets.BASE_SIZE,
+    loc = ((400,225),"bottomright"),
+    size = (115,115),
+    border = [-1,(219, 16, 1),0,'outset'],
+    hov_border = [10, (219, 16, 1), 0],
+    active_border = [10, (181, 12, 0),0],
+    background_clr = (219, 16, 1),
+    active_background_clr = (181, 12, 0),
+    font_clrs = [(25,25,25)],
+    font_size = 22,
+    font_family = "RopaSans-Regular.ttf",
+    layer = 5001,
+    ease_mode = "inout",
+    ease_seconds= 0.3,
+    parent_groups = [all_group,to_draw_group,buttons_group],
+    living = False
+)
+
+blue_button = Button(
+    winsize = assets.BASE_SIZE,
+    loc = ((400,225),"bottomleft"),
+    size = (115,115),
+    border = [-1,(8, 84, 191),0,'outset'],
+    hov_border = [10, (8, 84, 191), 0],
+    active_border = [10, (6, 67, 153),0],
+    background_clr = (8, 84, 191),
+    active_background_clr = (6, 67, 153),
+    font_clrs = [(25,25,25)],
+    font_size = 22,
+    font_family = "RopaSans-Regular.ttf",
+    layer = 5001,
+    ease_mode = "inout",
+    ease_seconds= 0.3,
+    parent_groups = [all_group,to_draw_group,buttons_group],
+    living = False
+)
+
+green_button = Button(
+    winsize = assets.BASE_SIZE,
+    loc = ((400,225),"topleft"),
+    size = (115,115),
+    border = [-1,(53, 153, 17),0,'outset'],
+    hov_border = [10, (53, 153, 17), 0],
+    active_border = [10, (42, 115, 13),0],
+    background_clr = (53, 153, 17),
+    active_background_clr = (42, 115, 13),
+    font_clrs = [(25,25,25)],
+    font_size = 22,
+    font_family = "RopaSans-Regular.ttf",
+    layer = 5001,
+    ease_mode = "inout",
+    ease_seconds= 0.3,
+    parent_groups = [all_group,to_draw_group,buttons_group],
+    living = False
+)
 
 deck1 = Deck(assets.BASE_SIZE,0,assets.DECK1_MIDTOP,400,[all_group,to_draw_group,cards_group],False)
 deck2 = Deck(assets.BASE_SIZE,90,assets.DECK2_MIDTOP,225,[all_group,to_draw_group,cards_group],False)
@@ -178,12 +254,13 @@ to_draw_group.add(first_card)
 a_qui_le_tour = 0
 clockwise_direction = random.choice([True, False])
 timers = []
+last_played_card = None
 
 
 
 def loop(screen,new_winsize, dt,fps,game_infos = None):
 
-    global timers
+    global timers,last_played_card
 
     if game_infos != None:
         timers.append(Timer(assets.SECONDS_BEFORE_GAME_START,'appear_splash_titles'))
@@ -193,10 +270,10 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
             temp_decks[i].draw_cards(7,False)
         update_pseudos()
 
-
     cursor = pygame.mouse.get_pos()
-
+    hovered_button = (buttons_group.get_sprites_at(cursor) or [None])[-1]
     hovered_card:Card = (cards_group.get_sprites_at(cursor) or [None])[-1]
+
     if hovered_card:
         if hovered_card.get_face() == "hidden":
             hovered_card = None
@@ -206,13 +283,18 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
     played_card = deck1.get_played_card()
 
     if played_card:
+        last_played_card = played_card
         game.card_played(played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
         deck1.lower()
         pseudo1.set_highlight()
         timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS,"flip_deck1"))
         timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS + assets.CARDS_REVERSE_ANIMATION_SECONDS[0]*2 + 0.5,"appear_splash_titles"))
+        if played_card.get_value() in ["wild","4wild"]:
+            red_button.liven()
+            yellow_button.liven()
+            blue_button.liven()
+            green_button.liven()
         
-
     for timer in timers:
         res,infos = timer.pass_time(dt)
         if res:
@@ -239,11 +321,14 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
             if event.button in (pygame.BUTTON_LEFT,pygame.BUTTON_RIGHT) and not splash_title1.alive():
                 if hovered_card:
                     hovered_card.set_clicking(True)
-        
+                if hovered_button:
+                    hovered_button.set_clicking(True)
         if event.type == pygame.MOUSEBUTTONUP and not splash_title1.alive():
             if event.button in (pygame.BUTTON_LEFT,pygame.BUTTON_LEFT):
                 if hovered_card:
                     hovered_card.set_clicking(False)
+                if hovered_button:
+                    hovered_button.set_clicking(False)
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
