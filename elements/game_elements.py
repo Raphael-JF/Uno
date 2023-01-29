@@ -43,9 +43,9 @@ pioche = Image(
 
 dark_background = Box(
     winsize = assets.BASE_SIZE,
-    size = [802,452],
+    size = [800,450],
     loc = [[0,0],"topleft"],
-    background_clr=(0, 0, 0, 125),
+    background_clr=(0, 0, 0, 175),
     border = [-1,(0,0,0),0,"inset"],
     layer=5000,
     parent_groups = [all_group,to_draw_group],
@@ -159,10 +159,10 @@ pseudos = [pseudo1,pseudo2,pseudo3,pseudo4]
 
 yellow_button = Button(
     winsize = assets.BASE_SIZE,
-    loc = ((400,225),"topright"),
+    loc = ((395,230),"topright"),
     size = (115,115),
     border = [-1,(255, 244, 2),0,'outset'],
-    hov_border = [10, (217,210,2),0],
+    hov_border = [5, (217,210,2),0],
     background_clr = (255, 244, 2),
     hov_background_clr = (217,210,2),
     font_clrs = [(25,25,25)],
@@ -176,10 +176,10 @@ yellow_button = Button(
 
 red_button = Button(
     winsize = assets.BASE_SIZE,
-    loc = ((400,225),"bottomright"),
+    loc = ((395,220),"bottomright"),
     size = (115,115),
     border = [-1,(219, 16, 1),0,'outset'],
-    hov_border = [10, (181, 12, 0),0],
+    hov_border = [5, (181, 12, 0),0],
     background_clr = (219, 16, 1),
     hov_background_clr = (181, 12, 0),
     font_clrs = [(25,25,25)],
@@ -193,10 +193,10 @@ red_button = Button(
 
 blue_button = Button(
     winsize = assets.BASE_SIZE,
-    loc = ((400,225),"bottomleft"),
+    loc = ((405,220),"bottomleft"),
     size = (115,115),
     border = [-1,(8, 84, 191),0,'outset'],
-    hov_border = [10, (6, 67, 153),0],
+    hov_border = [5, (6, 67, 153),0],
     background_clr = (8, 84, 191),
     hov_background_clr = (6, 67, 153),
     font_clrs = [(25,25,25)],
@@ -210,10 +210,10 @@ blue_button = Button(
 
 green_button = Button(
     winsize = assets.BASE_SIZE,
-    loc = ((400,225),"topleft"),
+    loc = ((405,230),"topleft"),
     size = (115,115),
     border = [-1,(53, 153, 17),0,'outset'],
-    hov_border = [10, (42, 115, 13), 0],
+    hov_border = [5, (42, 115, 13), 0],
     background_clr = (53, 153, 17),
     hov_background_clr = (42, 115, 13),
     font_clrs = [(25,25,25)],
@@ -336,12 +336,12 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
                     hovered_card.set_clicking(True)
                 if hovered_button:
                     hovered_button.set_clicking(True)
+
         if event.type == pygame.MOUSEBUTTONUP and not splash_title1.alive():
             if event.button in (pygame.BUTTON_LEFT,pygame.BUTTON_LEFT):
                 if hovered_card:
                     hovered_card.set_clicking(False)
                 if hovered_button:
-                    print("signal")
                     if hovered_button.get_clicking():
                         click_manage(hovered_button)
                         

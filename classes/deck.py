@@ -376,3 +376,4 @@ class Deck():
     def add_card(self,card:Card):
 
         self.cartes.append(card)
+        card.set_parent_deck(self)
