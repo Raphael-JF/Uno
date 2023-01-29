@@ -26,17 +26,24 @@ class Game(pygame.sprite.Sprite):
 
 
     def card_played(self,card:Card,ease_seconds,ease_mode):
-
-        dest_midtop_x_extremums = [round(self.pos[0]*29/30),round(self.pos[0]*31/30)]
-        dest_midtop_y_extremums = [round(self.pos[1]*29/30),round(self.pos[1]*31/30)]
-        dest_midtop = [random.randint(*dest_midtop_x_extremums),random.randint(*dest_midtop_y_extremums)-card.height//2]
-        degrees = round(random.uniform(-7.5,7.5),2)
-        dep_midtop = list(card.pos)
+    
+        if card.get_value() in ["wild","4wild"] and not card.get_color():
+            card.resize(1.2,ease_seconds,ease_mode)
+            pos = self.pos[:]
+            pos[1] -= card.height//2
+            card.move_to(pos,ease_seconds,ease_mode)
         
-        card.move_a_to_b(dep_midtop,dest_midtop,ease_seconds,ease_mode)
-        card.rotate(degrees,ease_seconds,ease_mode)
-        if card.get_value() not in ["wild","4wild"]:
+        else:
+            card.resize(1,ease_seconds,ease_mode)
+            dest_midtop_x_extremums = [round(self.pos[0]*29/30),round(self.pos[0]*31/30)]
+            dest_midtop_y_extremums = [round(self.pos[1]*29/30),round(self.pos[1]*31/30)]
+            dest_midtop = [random.randint(*dest_midtop_x_extremums),random.randint(*dest_midtop_y_extremums)-card.height//2]
+            degrees = round(random.uniform(-7.5,7.5),2)
+            
+            card.move_to(dest_midtop,ease_seconds,ease_mode)
+            card.rotate(degrees,ease_seconds,ease_mode)
             self.timers.append(Timer(ease_seconds,'nullify',[card]))
+
 
     def update(self,new_winsize,dt,fps,cursor):
 
@@ -67,9 +74,8 @@ class Game(pygame.sprite.Sprite):
         
         if id == "nullify":
             card_midtop = infos[0].pos
-            surface, rect = infos[0].nullify()
+            surface, _ = infos[0].nullify()
             new_origin = self.rect.topleft
-            
             relative_midtop = [card_midtop[0] - new_origin[0], card_midtop[1] - new_origin[1]]
             self.image.blit(surface,surface.get_rect(midtop=relative_midtop))
         

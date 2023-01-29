@@ -50,7 +50,6 @@ class Player_name(Title):
     def rescale(self,new_winsize):
 
         super().rescale(new_winsize)
-        print(self.ratio)
         self.base_width *= self.ratio
         self.base_height *= self.ratio
         self.base_font_size *= self.ratio

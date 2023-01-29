@@ -113,7 +113,7 @@ class Deck():
             self.change_layers()
 
 
-    def draw_cards(self,number_of_cards:int=1,sort_cards:bool=False):
+    def draw_cards(self,number_of_cards:int=1,instant_sort:bool=False):
 
         if number_of_cards<1:
             raise ValueError("number_of_cards must be => 1")
@@ -145,8 +145,13 @@ class Deck():
             self.cards_to_add.append(carte)
             self.timers.append(Timer(i*assets.CARDS_DRAWING_DELAY_SECONDS,"draw_card"))
         
-        duree_avant_tri = number_of_cards*assets.CARDS_DRAWING_DELAY_SECONDS + assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS
-        self.timers.append(Timer(duree_avant_tri,'arrange'))
+        if instant_sort:
+            self.arrange()
+            self.rotate_cards(assets.DECK_ROTATION_ANIMATION_SECONDS,'out')
+            self.shift_cards(assets.CARDS_SORTING_ANIMATION_SECONDS,'inout')
+        else:
+            duree_avant_tri = number_of_cards*assets.CARDS_DRAWING_DELAY_SECONDS + assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS
+            self.timers.append(Timer(duree_avant_tri,'arrange'))
 
 
     def flip_cards(self):
@@ -355,11 +360,19 @@ class Deck():
         self.shift_cards(assets.CARDS_SORTING_ANIMATION_SECONDS,"inout")
         self.played_card = card
 
+
     def elevate(self):
+
         self.elevated = True
         self.resize_cards(1.1,assets.DECK_ELEVATION_ANIMATION_SECONDS,'out')
 
+
     def lower(self):
+        
         self.elevated = False
         self.resize_cards(1.1,assets.DECK_ELEVATION_ANIMATION_SECONDS,'out')
         
+
+    def add_card(self,card:Card):
+
+        self.cartes.append(card)
