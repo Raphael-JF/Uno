@@ -15,6 +15,7 @@ class Game(pygame.sprite.Sprite):
         self.height = assets.GAME_PILE_SIZE[1]
         self.timers:list[Timer] = []
         self._layer = 2
+        self.color = None
 
         self.calc_surf()
 
@@ -34,6 +35,7 @@ class Game(pygame.sprite.Sprite):
             card.move_to(pos,ease_seconds,ease_mode)
         
         else:
+            self.color = card.get_color()
             card.resize(1,ease_seconds,ease_mode)
             dest_midtop_x_extremums = [round(self.pos[0]*29/30),round(self.pos[0]*31/30)]
             dest_midtop_y_extremums = [round(self.pos[1]*29/30),round(self.pos[1]*31/30)]
@@ -79,4 +81,6 @@ class Game(pygame.sprite.Sprite):
             relative_midtop = [card_midtop[0] - new_origin[0], card_midtop[1] - new_origin[1]]
             self.image.blit(surface,surface.get_rect(midtop=relative_midtop))
         
-        
+    
+    def get_color(self):
+        return self.color

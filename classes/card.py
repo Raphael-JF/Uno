@@ -158,10 +158,11 @@ class Card(pygame.sprite.Sprite):
             
         if self.clicking and self.face == "showed" and self.parent_deck:
             self.pos = cursor[0], cursor[1] - self.height//2
-            if self.center_pile_hitbox_rect.collidepoint(cursor) and not self.center_pile_hitbox_rect.collidepoint(self.last_cursor_pos):
-                self.resize(1,assets.CARD_RESIZE_ANIMATION_SECONDS,'inout')
-            if not self.center_pile_hitbox_rect.collidepoint(cursor) and self.center_pile_hitbox_rect.collidepoint(self.last_cursor_pos):
-                self.resize(1.2,assets.CARD_RESIZE_ANIMATION_SECONDS,'inout')
+            if self in self.parent_deck.suggested_cards:
+                if self.center_pile_hitbox_rect.collidepoint(cursor) and not self.center_pile_hitbox_rect.collidepoint(self.last_cursor_pos):
+                    self.resize(1,assets.CARD_RESIZE_ANIMATION_SECONDS,'inout')
+                if not self.center_pile_hitbox_rect.collidepoint(cursor) and self.center_pile_hitbox_rect.collidepoint(self.last_cursor_pos):
+                    self.resize(1.2,assets.CARD_RESIZE_ANIMATION_SECONDS,'inout')
             self.calc_card()
 
         for timer in self.timers:

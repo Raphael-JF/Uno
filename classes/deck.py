@@ -35,6 +35,7 @@ class Deck():
         self.played_card = None
         self.elevated = False
         self.resize_ratio = 1
+        self.pile_color = None
         
 
     def set_infos(self,mode,name):
@@ -52,9 +53,6 @@ class Deck():
 
         if new_winsize != self.winsize:
             self.rescale(new_winsize)
-
-        # for carte in self.cartes:
-        #     carte.update(new_winsize,dt,fps,cursor)
 
         if self.showed and not self.get_clicking_card():
             last_hovered_card = self.get_hovered_card()
@@ -96,11 +94,14 @@ class Deck():
     def timer_handling(self,id,infos):
 
         if id == "draw_card":
+            instant_sort = infos[0]
             carte = self.cards_to_add.pop(-1)
             self.timers.append(Timer(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS/2,"change_layers"))
             if self.showed:
                 carte.add_timer(Timer(assets.CARDS_DRAWING_DELAY_BEFORE_FLIP,'flip',[assets.CARDS_REVERSE_ANIMATION_SECONDS,['in','out']]))
             self.cartes.append(carte)
+            if instant_sort:
+                self.arrange()
             self.rotate_cards(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS,'out')
             self.shift_cards(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS,'out')
 
@@ -143,13 +144,9 @@ class Deck():
                 group.add(carte)
             layer += 1
             self.cards_to_add.append(carte)
-            self.timers.append(Timer(i*assets.CARDS_DRAWING_DELAY_SECONDS,"draw_card"))
-        
-        if instant_sort:
-            self.arrange()
-            self.rotate_cards(assets.DECK_ROTATION_ANIMATION_SECONDS,'out')
-            self.shift_cards(assets.CARDS_SORTING_ANIMATION_SECONDS,'inout')
-        else:
+            self.timers.append(Timer(i*assets.CARDS_DRAWING_DELAY_SECONDS,"draw_card",[instant_sort]))
+
+        if not instant_sort:
             duree_avant_tri = number_of_cards*assets.CARDS_DRAWING_DELAY_SECONDS + assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS
             self.timers.append(Timer(duree_avant_tri,'arrange'))
 
@@ -177,13 +174,9 @@ class Deck():
 
         if self.deck_degrees != 0:
             return
-
-        
         
         self.resize_ratio = new_ratio
-
         self.shift_cards(ease_seconds,ease_mode)
-
         for carte in self.cartes:
             carte.resize(new_ratio,ease_seconds,ease_mode)
     
@@ -196,8 +189,6 @@ class Deck():
 
         part1 = []
         part2 = []
-
-        
         for i in range(nb_cartes//2):
             part1.append(nb_cartes/2 - i)
             part2.append(-nb_cartes/2 + i)
@@ -215,6 +206,9 @@ class Deck():
         
     
     def shift_cards(self,ease_seconds,ease_mode):
+
+        if self.deck_degrees == 0:
+            print([i.get_color() for i in self.cartes])
 
         nb_cartes = len(self.cartes)
         if nb_cartes == 0:
@@ -248,13 +242,14 @@ class Deck():
                 for carte in self.cartes:
 
                     cur_y = self.deck_midtop[1]
-
+                    print(carte in self.suggested_cards, not carte.get_hover())
                     if self.elevated:
                         cur_y -= self.hovered_deck_elevation
-                    if carte in self.suggested_cards and not carte.get_hover():
-                        cur_y -= self.suggested_card_elevation
-                    elif carte.get_hover():
-                        cur_y -= self.hovered_deck_elevation
+                        if carte in self.suggested_cards and not carte.get_hover():
+                            print("signal")
+                            cur_y -= self.suggested_card_elevation
+                        elif carte.get_hover():
+                            cur_y -= self.hovered_card_elevation
 
                     y.append(round(cur_y))
 
@@ -345,7 +340,7 @@ class Deck():
                 carte.set_parent_deck(self)
                 carte.set_placement_mode("midright")
 
-        self.suggested_cards = []
+        self.set_pile_color(self.pile_color)
         self.hovered_card = None
         self.played_card = None
         self.elevated = False
@@ -354,7 +349,7 @@ class Deck():
     
     def play_card(self,card:Card):
 
-        if card not in self.cartes:
+        if card not in self.suggested_cards:
             return
         self.cartes.remove(card)
         self.shift_cards(assets.CARDS_SORTING_ANIMATION_SECONDS,"inout")
@@ -377,3 +372,13 @@ class Deck():
 
         self.cartes.append(card)
         card.set_parent_deck(self)
+
+
+    def set_pile_color(self,color):
+
+        self.pile_color = color
+        self.suggested_cards = []
+        for carte in self.cartes + self.cards_to_add:
+            if carte.get_color() == color:
+                self.suggested_cards.append(carte)
+        self.shift_cards(assets.CARDS_HOVER_SHIFT_ANIMATION_SECONDS,'out')

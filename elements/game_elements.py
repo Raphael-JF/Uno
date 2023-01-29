@@ -295,13 +295,13 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
         deck.update(new_winsize,dt,fps,cursor,hovered_card)
     played_card = deck1.get_played_card()
     
-
     if played_card:
         last_played_card = played_card
         game.card_played(played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
         if played_card.get_value() in ["wild","4wild"]:
             timers.append(Timer(assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,"liven_wild_buttons"))
         else:
+            apply_color_to_decks(game.get_color())
             deck1.lower()
             pseudo1.set_highlight()
             timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS,"flip_deck1"))
@@ -383,8 +383,12 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
     if game_infos != None:
         first_card.add_timer(Timer(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS/2,'flip',[assets.CARDS_REVERSE_ANIMATION_SECONDS,['in','out']]))
         game.card_played(first_card,assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS,'out') 
+        apply_color_to_decks(game.get_color())
 
-    
+def apply_color_to_decks(color):
+    for deck in decks:
+        deck.set_pile_color(color)
+
 
 def timer_handling(id,infos = None):
 
@@ -405,42 +409,7 @@ def timer_handling(id,infos = None):
         dark_background.liven()
         cancel_wild.liven()
     
-def click_manage(button:Button):
-    
-    if button in [red_button,yellow_button,blue_button,green_button]:
-        red_button.kill()
-        yellow_button.kill()
-        blue_button.kill()
-        green_button.kill()
-        dark_background.kill()
-        cancel_wild.kill()
-        if button is red_button:
-            last_played_card.set_wild_color("r")
-        elif button is yellow_button:
-            last_played_card.set_wild_color("j")
-        elif button is green_button:
-            last_played_card.set_wild_color("v")
-        elif button is blue_button:
-            last_played_card.set_wild_color("b")
-        deck1.lower()
-        pseudo1.set_highlight()
-        timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS,"flip_deck1"))
-        timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS + assets.CARDS_REVERSE_ANIMATION_SECONDS[0]*2 + 0.5,"appear_splash_titles"))
-        game.card_played(last_played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
-        
-            
 
-    if button is cancel_wild:
-        red_button.kill()
-        yellow_button.kill()
-        blue_button.kill()
-        green_button.kill()
-        dark_background.kill()
-        cancel_wild.kill()
-        deck1.add_card(last_played_card)
-        deck1.arrange()
-        deck1.shift_cards(assets.CARDS_SORTING_ANIMATION_SECONDS,"inout")
-        deck1.rotate_cards(assets.CARDS_SORTING_ANIMATION_SECONDS,"inout")
 
 
 def update_pseudos():
@@ -505,3 +474,43 @@ def swap_decks():
     deck2.rotate_cards(0,"inout")
     deck3.rotate_cards(0,"inout")
     deck4.rotate_cards(0,"inout")
+
+
+def click_manage(button:Button):
+    
+    if button in [red_button,yellow_button,blue_button,green_button]:
+        red_button.kill()
+        yellow_button.kill()
+        blue_button.kill()
+        green_button.kill()
+        dark_background.kill()
+        cancel_wild.kill()
+        if button is red_button:
+            last_played_card.set_wild_color("r")
+            apply_color_to_decks("r")
+        elif button is yellow_button:
+            last_played_card.set_wild_color("j")
+            apply_color_to_decks("j")
+        elif button is green_button:
+            last_played_card.set_wild_color("v")
+            apply_color_to_decks("v")
+        elif button is blue_button:
+            last_played_card.set_wild_color("b")
+            apply_color_to_decks("b")
+        deck1.lower()
+        pseudo1.set_highlight()
+        timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS,"flip_deck1"))
+        timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS + assets.CARDS_REVERSE_ANIMATION_SECONDS[0]*2 + 0.5,"appear_splash_titles"))
+        game.card_played(last_played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
+
+    if button is cancel_wild:
+        red_button.kill()
+        yellow_button.kill()
+        blue_button.kill()
+        green_button.kill()
+        dark_background.kill()
+        cancel_wild.kill()
+        deck1.add_card(last_played_card)
+        deck1.arrange()
+        deck1.shift_cards(assets.CARDS_SORTING_ANIMATION_SECONDS,"inout")
+        deck1.rotate_cards(assets.CARDS_SORTING_ANIMATION_SECONDS,"inout")
