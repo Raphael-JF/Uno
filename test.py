@@ -1,1 +1,5 @@
-print(type(None))
+a = [1,2,3,4]
+b = [:]
+b[0] = 10000
+
+print(a)

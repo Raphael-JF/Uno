@@ -207,9 +207,6 @@ class Deck():
     
     def shift_cards(self,ease_seconds,ease_mode):
 
-        if self.deck_degrees == 0:
-            print([i.get_color() for i in self.cartes])
-
         nb_cartes = len(self.cartes)
         if nb_cartes == 0:
             return
@@ -242,11 +239,9 @@ class Deck():
                 for carte in self.cartes:
 
                     cur_y = self.deck_midtop[1]
-                    print(carte in self.suggested_cards, not carte.get_hover())
                     if self.elevated:
                         cur_y -= self.hovered_deck_elevation
                         if carte in self.suggested_cards and not carte.get_hover():
-                            print("signal")
                             cur_y -= self.suggested_card_elevation
                         elif carte.get_hover():
                             cur_y -= self.hovered_card_elevation

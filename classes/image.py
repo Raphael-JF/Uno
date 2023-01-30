@@ -9,7 +9,6 @@ class Image(pygame.sprite.Sprite):
         scale_axis:list,
         loc:list,
         parent_groups:list,
-        degrees:int = 0,
         border:list = [-1,(0,0,0)],
         layer:int = 0,
         living:bool = True,
@@ -27,7 +26,6 @@ class Image(pygame.sprite.Sprite):
 
         super().__init__()
         
-        self.degrees = degrees
         self.name = name
         self.winsize = winsize
         self._layer = layer
@@ -90,9 +88,6 @@ class Image(pygame.sprite.Sprite):
         contenu = pygame.transform.smoothscale(contenu,(round(self.width),round(self.height)))
 
         self.image.blit(contenu,contenu.get_rect(center=self.image.get_rect().center))
-        
-        if self.degrees != 0:
-            self.image = pygame.transform.rotate(self.image,self.degrees)
         
         pos = [round(i) for i in self.pos]
         if self.placement_mode == "topleft":
