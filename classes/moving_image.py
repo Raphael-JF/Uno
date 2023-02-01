@@ -10,19 +10,19 @@ class Moving_image(Image):
         loc: list, 
         alt_pos:list,
         parent_groups: list, 
-        ease_seconds:int,
-        ease_mode:str,
-        border: list = ..., 
+        ease_seconds:list[float],
+        ease_modes:list[str],
+        border: list = [-1,(0,0,0)], 
         layer: int = 0, 
         living: bool = True,
     ):
 
         super().__init__(name, winsize, scale_axis, loc, parent_groups, border, layer, living)
         self.ease_seconds = ease_seconds
-        self.ease_mode = ease_mode
+        self.ease_modes = ease_modes
         self.base_pos = self.pos[:]
         self.alt_pos = alt_pos
-        self.pos_frames = Transition([self.pos,self.alt_pos],[self.ease_seconds],[self.ease_mode])
+        self.pos_frames = Transition([self.pos,self.alt_pos,self.pos],self.ease_seconds,self.ease_modes)
 
     def update(self,new_winsize,dt,fps,cursor):
         """Actualisation du sprite ayant lieu à chaque changement image"""
@@ -35,7 +35,7 @@ class Moving_image(Image):
             self.calc_image()
 
         if finish:
-
+            self.pos_frames.reset_index()
 
 
 

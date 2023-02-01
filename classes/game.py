@@ -36,6 +36,7 @@ class Game(pygame.sprite.Sprite):
         
         else:
             self.color = card.get_color()
+            self.value = card.get_value()
             card.resize(1,ease_seconds,ease_mode)
             dest_midtop_x_extremums = [round(self.pos[0]*29/30),round(self.pos[0]*31/30)]
             dest_midtop_y_extremums = [round(self.pos[1]*29/30),round(self.pos[1]*31/30)]
@@ -83,4 +84,10 @@ class Game(pygame.sprite.Sprite):
         
     
     def get_color(self):
+
         return self.color
+
+
+    def get_value(self):
+
+        return self.value

@@ -36,6 +36,7 @@ class Deck():
         self.elevated = False
         self.resize_ratio = 1
         self.pile_color = None
+        self.pile_value = None
         
 
     def set_infos(self,mode,name):
@@ -335,7 +336,7 @@ class Deck():
                 carte.set_parent_deck(self)
                 carte.set_placement_mode("midright")
 
-        self.set_pile_color(self.pile_color)
+        self.set_pile_clrval(self.pile_color,self.pile_value)
         self.hovered_card = None
         self.played_card = None
         self.elevated = False
@@ -369,11 +370,11 @@ class Deck():
         card.set_parent_deck(self)
 
 
-    def set_pile_color(self,color):
+    def set_pile_clrval(self,color,value):
 
         self.pile_color = color
         self.suggested_cards = []
         for carte in self.cartes + self.cards_to_add:
-            if carte.get_color() == color:
+            if carte.get_color() == color or carte.get_value() in ["wild", "4wild"] or carte.get_value() == value:
                 self.suggested_cards.append(carte)
         self.shift_cards(assets.CARDS_HOVER_SHIFT_ANIMATION_SECONDS,'out')

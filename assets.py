@@ -46,6 +46,7 @@ SECONDS_BEFORE_GAME_START = CARDS_DRAWING_DELAY_SECONDS*7 + CARDS_TRAVEL_FROM_DR
 DECK_ELEVATION_ANIMATION_SECONDS = 0.35 #durée de l'animation d'élévation/descente du paquet.
 DECK_ROTATION_ANIMATION_SECONDS = 0.25 #durée de l'animation de rotation du paquet
 PLAYER_NAME_RESIZING_ANIMATION_SECONDS = 0.5 # durée de l'animation de rétrécissement / agrandissement du nom du joueur qui joue.
+DRAW_PILE_ARROW_ANIMATION_SECONDS = 0.5 # durée de l'animation de mouvement de la flèche guidant vers la pioche
 
 
 DRAW_PILE_CENTER = [110,75] # centre de la pioche selon BASE_SIZE

@@ -13,6 +13,7 @@ from classes.deck import Deck
 from classes.card import Card
 from classes.game import Game
 from classes.button import Button
+from classes.moving_image import Moving_image
 pygame.init()
 
 all_group = pygame.sprite.Group()
@@ -55,8 +56,17 @@ pioche_button = Button(
     living = False
 )
 
-pioche_fleche = Translating_image(
-    
+pioche_fleche = Moving_image(
+    name=["arrow.png"],
+    winsize=assets.BASE_SIZE,
+    scale_axis=['x',55],
+    loc=[[220,85],"center"],
+    alt_pos = [250,85],
+    ease_seconds = [assets.DRAW_PILE_ARROW_ANIMATION_SECONDS]*2,
+    ease_modes = ['linear','linear'],
+    layer=10,
+    parent_groups = [all_group,to_draw_group],
+    living = False
 )
 
 dark_background = Box(
@@ -318,9 +328,10 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
         if played_card.get_value() in ["wild","4wild"]:
             timers.append(Timer(assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,"liven_wild_buttons"))
         else:
-            apply_color_to_decks(game.get_color())
+            apply_clrval_to_decks(game.get_color(),game.get_value())
             deck1.lower()
             pioche_button.kill()
+            pioche_fleche.kill()
             pseudo1.set_highlight()
             timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS,"flip_deck1"))
             timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS + assets.CARDS_REVERSE_ANIMATION_SECONDS[0]*2 + 0.5,"appear_splash_titles"))
@@ -377,6 +388,7 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
                     timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS,"flip_deck1"))
                     deck1.elevate()
                     pioche_button.liven()
+                    pioche_fleche.liven()
                     pseudo1.set_highlight()
 
             if event.key == pygame.K_a:
@@ -402,13 +414,13 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
     if game_infos != None:
         first_card.add_timer(Timer(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS/2,'flip',[assets.CARDS_REVERSE_ANIMATION_SECONDS,['in','out']]))
         game.card_played(first_card,assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS,'out') 
-        apply_color_to_decks(game.get_color())
+        apply_clrval_to_decks(game.get_color(),game.get_value())
 
 
 
-def apply_color_to_decks(color):
+def apply_clrval_to_decks(color,value):
     for deck in decks:
-        deck.set_pile_color(color)
+        deck.set_pile_clrval(color,value)
 
 
 def timer_handling(id,infos = None):
@@ -508,16 +520,16 @@ def click_manage(button:Button):
         cancel_wild.kill()
         if button is red_button:
             last_played_card.set_wild_color("r")
-            apply_color_to_decks("r")
+            apply_clrval_to_decks("r",None)
         elif button is yellow_button:
             last_played_card.set_wild_color("j")
-            apply_color_to_decks("j")
+            apply_clrval_to_decks("j",None)
         elif button is green_button:
             last_played_card.set_wild_color("v")
-            apply_color_to_decks("v")
+            apply_clrval_to_decks("v",None)
         elif button is blue_button:
             last_played_card.set_wild_color("b")
-            apply_color_to_decks("b")
+            apply_clrval_to_decks("b",None)
         deck1.lower()
         pioche_button.kill()
         pseudo1.set_highlight()
