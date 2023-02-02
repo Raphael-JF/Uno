@@ -64,7 +64,7 @@ pioche_fleche = Moving_image(
     alt_pos = [250,85],
     ease_seconds = [assets.DRAW_PILE_ARROW_ANIMATION_SECONDS]*2,
     ease_modes = ['linear','linear'],
-    layer=10,
+    layer=9,
     parent_groups = [all_group,to_draw_group],
     living = False
 )
@@ -550,4 +550,11 @@ def click_manage(button:Button):
         deck1.rotate_cards(assets.CARDS_SORTING_ANIMATION_SECONDS,"inout")
 
     if button is pioche_button:
-        print("signal")
+        x,y = assets.DRAW_PILE_CENTER
+        h = assets.CARD_SIZE[1]
+
+        pos = [x, y - h/2]
+        valeur = deck1.draw_pile.pop(random.randint(0,len(deck1.draw_pile)-1))
+        carte = Card([pos,'midtop'],valeur,10,deck1,1)
+        deck1.add_card(Card([pos,'midtop'],valeur,10,deck1,1))
+        
