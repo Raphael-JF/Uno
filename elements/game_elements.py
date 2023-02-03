@@ -556,5 +556,7 @@ def click_manage(button:Button):
         pos = [x, y - h/2]
         valeur = deck1.draw_pile.pop(random.randint(0,len(deck1.draw_pile)-1))
         carte = Card([pos,'midtop'],valeur,10,deck1,1)
-        deck1.add_card(Card([pos,'midtop'],valeur,10,deck1,1))
+        deck1.add_card(carte)
+        carte.move_to(game.pos,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
+        
         

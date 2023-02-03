@@ -1,4 +1,4 @@
-import pygame,assets,math,random
+import pygame,assets,random
 from classes.card import Card
 from classes.timer import Timer
 
