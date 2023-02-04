@@ -269,10 +269,10 @@ class Deck():
     
     def change_layers(self):
         for i,carte in enumerate(self.cartes):
-                carte.set_layer(10+i)
-                for group in self.sprites_group:
-                    if type(group) is pygame.sprite.LayeredUpdates:
-                        group.change_layer(carte,carte.get_layer())
+            carte.set_layer(10+i)
+            for group in self.sprites_group:
+                if type(group) is pygame.sprite.LayeredUpdates:
+                    group.change_layer(carte,carte.get_layer())
 
 
     def get_hovered_card(self):
@@ -355,17 +355,20 @@ class Deck():
     def elevate(self):
 
         self.elevated = True
-        self.resize_cards(1.1,assets.DECK_ELEVATION_ANIMATION_SECONDS,'out')
+        self.resize_cards(assets.CARDS_ELEVATION_SIZE_RATIO,assets.DECK_ELEVATION_ANIMATION_SECONDS,'out')
 
 
     def lower(self):
         
         self.elevated = False
-        self.resize_cards(1.1,assets.DECK_ELEVATION_ANIMATION_SECONDS,'out')
+        self.resize_cards(assets.CARDS_ELEVATION_SIZE_RATIO,assets.DECK_ELEVATION_ANIMATION_SECONDS,'out')
         
 
     def add_card(self,card:Card):
 
+        for group in self.sprites_group:
+            if not group.has(card):
+                group.add(card)
         self.cartes.append(card)
         card.set_parent_deck(self)
 
@@ -373,6 +376,7 @@ class Deck():
     def set_pile_clrval(self,color,value):
 
         self.pile_color = color
+        self.pile_value = value
         self.suggested_cards = []
         for carte in self.cartes + self.cards_to_add:
             if carte.get_color() == color or carte.get_value() in ["wild", "4wild"] or carte.get_value() == value:

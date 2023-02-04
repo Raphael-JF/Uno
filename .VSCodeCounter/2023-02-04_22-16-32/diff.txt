@@ -1,0 +1,82 @@
+Date : 2023-02-04 22:16:32
+Directory : c:\Users\rapha\Desktop\Code\Uno
+Total : 43 files,  790 codes, 6 comments, 161 blanks, all 957 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| Python   |         42 |        787 |          6 |        159 |        952 |
+| Markdown |          1 |          3 |          0 |          2 |          5 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++-------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                    | files      | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                       |         43 |        790 |          6 |        161 |        957 |
+| . (Files)                                                               |          5 |        132 |         16 |         31 |        179 |
+| ..                                                                      |         20 |     -2,146 |       -244 |       -745 |     -3,135 |
+| ..\..                                                                   |         20 |     -2,146 |       -244 |       -745 |     -3,135 |
+| ..\..\..                                                                |         20 |     -2,146 |       -244 |       -745 |     -3,135 |
+| ..\..\..\OneDrive                                                       |         20 |     -2,146 |       -244 |       -745 |     -3,135 |
+| ..\..\..\OneDrive\Tale                                                  |         20 |     -2,146 |       -244 |       -745 |     -3,135 |
+| ..\..\..\OneDrive\Tale\Nsi                                              |         20 |     -2,146 |       -244 |       -745 |     -3,135 |
+| ..\..\..\OneDrive\Tale\Nsi\Python                                       |         20 |     -2,146 |       -244 |       -745 |     -3,135 |
+| ..\..\..\OneDrive\Tale\Nsi\Python\Uno                                   |         20 |     -2,146 |       -244 |       -745 |     -3,135 |
+| ..\..\..\OneDrive\Tale\Nsi\Python\Uno (Files)                           |          4 |       -115 |        -18 |        -27 |       -160 |
+| ..\..\..\OneDrive\Tale\Nsi\Python\Uno\classes                           |         13 |     -1,345 |       -205 |       -577 |     -2,127 |
+| ..\..\..\OneDrive\Tale\Nsi\Python\Uno\elements                          |          3 |       -686 |        -21 |       -141 |       -848 |
+| classes                                                                 |         15 |      1,686 |        213 |        704 |      2,603 |
+| elements                                                                |          3 |      1,118 |         21 |        171 |      1,310 |
++-------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                                | language | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| c:\Users\rapha\Desktop\Code\Uno\assets.py                               | Python   |         49 |          1 |         11 |         61 |
+| c:\Users\rapha\Desktop\Code\Uno\classes\box.py                          | Python   |        105 |         21 |         40 |        166 |
+| c:\Users\rapha\Desktop\Code\Uno\classes\button.py                       | Python   |        199 |         34 |         66 |        299 |
+| c:\Users\rapha\Desktop\Code\Uno\classes\button_family.py                | Python   |         34 |         36 |         28 |         98 |
+| c:\Users\rapha\Desktop\Code\Uno\classes\card.py                         | Python   |        268 |         17 |        130 |        415 |
+| c:\Users\rapha\Desktop\Code\Uno\classes\deck.py                         | Python   |        272 |          8 |        104 |        384 |
+| c:\Users\rapha\Desktop\Code\Uno\classes\game.py                         | Python   |         62 |          0 |         37 |         99 |
+| c:\Users\rapha\Desktop\Code\Uno\classes\image.py                        | Python   |         89 |         15 |         29 |        133 |
+| c:\Users\rapha\Desktop\Code\Uno\classes\input_field.py                  | Python   |        203 |          6 |         80 |        289 |
+| c:\Users\rapha\Desktop\Code\Uno\classes\manager.py                      | Python   |         71 |         18 |         26 |        115 |
+| c:\Users\rapha\Desktop\Code\Uno\classes\moving_image.py                 | Python   |         35 |          1 |          9 |         45 |
+| c:\Users\rapha\Desktop\Code\Uno\classes\player_name.py                  | Python   |         61 |          0 |         19 |         80 |
+| c:\Users\rapha\Desktop\Code\Uno\classes\splash_title.py                 | Python   |        129 |          6 |         54 |        189 |
+| c:\Users\rapha\Desktop\Code\Uno\classes\timer.py                        | Python   |         15 |          7 |         12 |         34 |
+| c:\Users\rapha\Desktop\Code\Uno\classes\title.py                        | Python   |         84 |         20 |         35 |        139 |
+| c:\Users\rapha\Desktop\Code\Uno\classes\transition.py                   | Python   |         59 |         24 |         35 |        118 |
+| c:\Users\rapha\Desktop\Code\Uno\elements\game_elements.py               | Python   |        560 |          3 |         94 |        657 |
+| c:\Users\rapha\Desktop\Code\Uno\elements\nouvelle_partie.py             | Python   |        399 |         13 |         52 |        464 |
+| c:\Users\rapha\Desktop\Code\Uno\elements\start_menu.py                  | Python   |        159 |          5 |         25 |        189 |
+| c:\Users\rapha\Desktop\Code\Uno\main.py                                 | Python   |          5 |          3 |          4 |         12 |
+| c:\Users\rapha\Desktop\Code\Uno\readme.md                               | Markdown |          3 |          0 |          2 |          5 |
+| c:\Users\rapha\Desktop\Code\Uno\test.py                                 | Python   |          7 |          0 |          1 |          8 |
+| c:\Users\rapha\Desktop\Code\Uno\utils.py                                | Python   |         68 |         12 |         13 |         93 |
+| c:\Users\rapha\OneDrive\Tale\Nsi\Python\Uno\assets.py                   | Python   |        -41 |         -1 |        -11 |        -53 |
+| c:\Users\rapha\OneDrive\Tale\Nsi\Python\Uno\classes\box.py              | Python   |        -97 |        -16 |        -36 |       -149 |
+| c:\Users\rapha\OneDrive\Tale\Nsi\Python\Uno\classes\button.py           | Python   |       -195 |        -34 |        -66 |       -295 |
+| c:\Users\rapha\OneDrive\Tale\Nsi\Python\Uno\classes\button_family.py    | Python   |        -34 |        -36 |        -28 |        -98 |
+| c:\Users\rapha\OneDrive\Tale\Nsi\Python\Uno\classes\card.py             | Python   |       -243 |        -18 |       -110 |       -371 |
+| c:\Users\rapha\OneDrive\Tale\Nsi\Python\Uno\classes\deck.py             | Python   |       -204 |         -9 |        -82 |       -295 |
+| c:\Users\rapha\OneDrive\Tale\Nsi\Python\Uno\classes\game.py             | Python   |        -31 |         -2 |        -21 |        -54 |
+| c:\Users\rapha\OneDrive\Tale\Nsi\Python\Uno\classes\image.py            | Python   |        -85 |        -15 |        -28 |       -128 |
+| c:\Users\rapha\OneDrive\Tale\Nsi\Python\Uno\classes\input_field.py      | Python   |       -199 |         -6 |        -80 |       -285 |
+| c:\Users\rapha\OneDrive\Tale\Nsi\Python\Uno\classes\manager.py          | Python   |        -71 |        -18 |        -24 |       -113 |
+| c:\Users\rapha\OneDrive\Tale\Nsi\Python\Uno\classes\splash_title.py     | Python   |        -60 |         -3 |        -31 |        -94 |
+| c:\Users\rapha\OneDrive\Tale\Nsi\Python\Uno\classes\timer.py            | Python   |        -13 |         -7 |        -10 |        -30 |
+| c:\Users\rapha\OneDrive\Tale\Nsi\Python\Uno\classes\title.py            | Python   |        -74 |        -20 |        -31 |       -125 |
+| c:\Users\rapha\OneDrive\Tale\Nsi\Python\Uno\classes\transition.py       | Python   |        -39 |        -21 |        -30 |        -90 |
+| c:\Users\rapha\OneDrive\Tale\Nsi\Python\Uno\elements\game_elements.py   | Python   |        -90 |         -3 |        -38 |       -131 |
+| c:\Users\rapha\OneDrive\Tale\Nsi\Python\Uno\elements\nouvelle_partie.py | Python   |       -441 |        -13 |        -72 |       -526 |
+| c:\Users\rapha\OneDrive\Tale\Nsi\Python\Uno\elements\start_menu.py      | Python   |       -155 |         -5 |        -31 |       -191 |
+| c:\Users\rapha\OneDrive\Tale\Nsi\Python\Uno\main.py                     | Python   |         -5 |         -3 |         -4 |        -12 |
+| c:\Users\rapha\OneDrive\Tale\Nsi\Python\Uno\test.py                     | Python   |         -3 |         -1 |         -1 |         -5 |
+| c:\Users\rapha\OneDrive\Tale\Nsi\Python\Uno\utils.py                    | Python   |        -66 |        -13 |        -11 |        -90 |
+| Total                                                                   |          |        790 |          6 |        161 |        957 |
++-------------------------------------------------------------------------+----------+------------+------------+------------+------------+

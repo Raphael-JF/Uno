@@ -1,5 +1,8 @@
-a = [1,2,3,4]
-b = [:]
-b[0] = 10000
+import pygame
 
+a = pygame.sprite.Group()
+b = pygame.sprite.Sprite()
+a.add(b)
+print(a)
+a.add(b)
 print(a)

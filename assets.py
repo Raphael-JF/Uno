@@ -55,7 +55,12 @@ HOVERED_DECK_ELEVATION_PX = 25 #hauteur que prend le paquet entier pour indiquer
 HOVERED_CARD_ELEVATION_PX = 25 # hauteur que prend une carte survolée dans le paquet selon BASE_SIZE
 SUGGESTED_CARD_ELEVATION_PX = 15 # hauteur que prend une carte suggérée dans le paquet selon BASE_SIZE
 
+CARDS_ELEVATION_SIZE_RATIO = 1.1 #ratio de taille pour les cartes dont le paquet est surélevé
+
 
 GAME_PILE_CENTER = [400,200] # centre de la surface de la pile de jeu selon BASE_SIZE
 GAME_PILE_SIZE = [140,140] # dimensions de la surface de la pile de jeu
 GAME_PILE_HITBOX = [250,150] # dimensions du rectangle de réactivité sur lequel la carte est sensible
+
+
+# ALL_CARDS = ["wild"]*15

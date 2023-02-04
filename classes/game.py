@@ -28,24 +28,26 @@ class Game(pygame.sprite.Sprite):
 
     def card_played(self,card:Card,ease_seconds,ease_mode):
     
-        if card.get_value() in ["wild","4wild"] and not card.get_color():
-            card.resize(1.2,ease_seconds,ease_mode)
-            pos = self.pos[:]
-            pos[1] -= card.height//2
-            card.move_to(pos,ease_seconds,ease_mode)
+        self.color = card.get_color()
+        self.value = card.get_value()
+        card.resize(1,ease_seconds,ease_mode)
+        dest_midtop_x_extremums = [round(self.pos[0]*29/30),round(self.pos[0]*31/30)]
+        dest_midtop_y_extremums = [round(self.pos[1]*29/30),round(self.pos[1]*31/30)]
+        dest_midtop = [random.randint(*dest_midtop_x_extremums),random.randint(*dest_midtop_y_extremums)-card.height//2]
+        print(dest_midtop)
+        degrees = round(random.uniform(-7.5,7.5),2)
         
-        else:
-            self.color = card.get_color()
-            self.value = card.get_value()
-            card.resize(1,ease_seconds,ease_mode)
-            dest_midtop_x_extremums = [round(self.pos[0]*29/30),round(self.pos[0]*31/30)]
-            dest_midtop_y_extremums = [round(self.pos[1]*29/30),round(self.pos[1]*31/30)]
-            dest_midtop = [random.randint(*dest_midtop_x_extremums),random.randint(*dest_midtop_y_extremums)-card.height//2]
-            degrees = round(random.uniform(-7.5,7.5),2)
-            
-            card.move_to(dest_midtop,ease_seconds,ease_mode)
-            card.rotate(degrees,ease_seconds,ease_mode)
-            self.timers.append(Timer(ease_seconds,'nullify',[card]))
+        card.move_to(dest_midtop,ease_seconds,ease_mode)
+        card.rotate(degrees,ease_seconds,ease_mode)
+        self.timers.append(Timer(ease_seconds,'nullify',[card]))
+
+
+    def card_centered(self,card:Card,ease_seconds,ease_mode):
+
+        card.resize(1.2,ease_seconds,ease_mode)
+        pos = self.pos[:]
+        pos[1] -= card.height//2
+        card.move_to(pos,ease_seconds,ease_mode)
 
 
     def update(self,new_winsize,dt,fps,cursor):
@@ -91,3 +93,8 @@ class Game(pygame.sprite.Sprite):
     def get_value(self):
 
         return self.value
+
+
+    def playable(self,card:Card):
+
+        return card.value == self.value or card.color == self.color or card.value in ["wild", "wild4"]
