@@ -440,24 +440,7 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
                     pioche_button.liven()
                     pioche_fleche.liven()
                     pseudo1.set_highlight()
-
-            if event.key == pygame.K_a:
-                deck1.draw_cards(1,True)
-            
-            if event.key == pygame.K_b:
-                deck1.shift_cards(0,'inout')
-                deck2.shift_cards(0,'inout')
-                deck3.shift_cards(0,'inout')
-                deck4.shift_cards(0,'inout')
-
-            if event.key == pygame.K_KP1:
-                deck1.flip_cards()
-            elif event.key == pygame.K_KP2:
-                deck2.flip_cards()
-            elif event.key == pygame.K_KP3:
-                deck3.flip_cards()
-            elif event.key == pygame.K_KP4:
-                deck4.flip_cards()
+                    
             elif event.key == pygame.K_ESCAPE:
                 return 0
                 
@@ -648,6 +631,7 @@ def click_manage(button:Button,new_winsize):
             dark_background.liven()
         else:
             game.card_played(last_played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
+            apply_clrval_to_decks(last_played_card.color,last_played_card.value)
             end_of_turn()
 
     if button is keep_card_button:
