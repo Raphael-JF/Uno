@@ -26,7 +26,6 @@ title = Image(
     winsize = assets.BASE_SIZE,
     scale_axis = ['y',150],
     loc = [[400,20],"midtop"],
-    border = [0,(0,0,0,0)],
     layer = 1,
     parent_groups = [all_group, to_draw_group],
 )

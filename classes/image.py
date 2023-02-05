@@ -9,49 +9,37 @@ class Image(pygame.sprite.Sprite):
         scale_axis:list,
         loc:list,
         parent_groups:list,
-        border:list = [-1,(0,0,0)],
         layer:int = 0,
         living:bool = True,
     ):
         """
-        winsize = [width:int,height:int] -> taille fenetre pygame
+        winsize = [base_width:int,base_height:int] -> taille fenetre pygame
         name = str -> chemin absolu vers l'image en partant du dossier 'images'. Aucune extension n'est concaténée.
         scale_axis = [x_or_y:str,value:int] -> taille voulue pour l'axe x ou y
         loc = [[x:int,y:int],mode:str] -> coordonnées et mode de placement ('center', 'topleft', 'topright', 'bottomleft','bottomright','midtop', midright', 'midbottom','midleft')
         degrees -> angle d'affichage de l'image
-        border = [bd_width:int,bd_clr:tuple] -> bd_width est l'épaisseur de la bordure : pour ne pas en avoir, insérer une valeur négative. bd_clr est la couleur de la bordure. 
+        border = [bd_base_width:int,bd_clr:tuple] -> bd_base_width est l'épaisseur de la bordure : pour ne pas en avoir, insérer une valeur négative. bd_clr est la couleur de la bordure. 
         layer -> couche sur laquelle afficher le sprite en partant de 1. Plus layer est élevée, plus la surface sera mise en avant.
 
         """
 
         super().__init__()
         
-        self.name = name
         self.winsize = winsize
         self._layer = layer
         self.pos = loc[0]
         self.placement_mode = loc[1]
         self.parent_groups = parent_groups
-        
-        if len(border[1]) != 4:
-            border[1] = list(border[1])
-            border[1].append(255)
-
-        self.base_border_width = border[0]
-        self.base_border_clr = border[1][:]
-
-        self.cur_border_width = self.base_border_width
-        self.cur_border_clr = self.base_border_clr[:]
-
-        contenu = pygame.image.load(os.path.join(os.getcwd(),'images',*self.name))
+        self.resize_ratio = 1
+        self.contenu = pygame.image.load(os.path.join(os.getcwd(),'images',*name))
         
         if scale_axis[0] == "x":
-            self.height = (scale_axis[1]*contenu.get_height()) / contenu.get_width()
-            self.width = scale_axis[1]
+            self.base_height = (scale_axis[1]*self.contenu.get_height()) / self.contenu.get_width()
+            self.base_width = scale_axis[1]
             
         elif scale_axis[0] == "y":
-            self.width = (scale_axis[1]*contenu.get_width()) / contenu.get_height()
-            self.height = scale_axis[1]
+            self.base_width = (scale_axis[1]*self.contenu.get_width()) / self.contenu.get_height()
+            self.base_height = scale_axis[1]
 
         else:
             raise ValueError("scale_axis[0] doit être 'x' ou 'y'")
@@ -59,36 +47,28 @@ class Image(pygame.sprite.Sprite):
         if living:
             self.liven()
 
+
     def liven(self):
+
         for group in self.parent_groups:
             group.add(self)
 
 
     def calc_image(self):
         """
-        Recalcul de la surface du sprite, ainsi que son rectangle.
+        Recalcul de la surface du sprite (sa taille).
         """
 
-        self.image = pygame.Surface([
-            round(self.width + self.cur_border_width*2),
-            round(self.height + self.cur_border_width*2)
-        ],pygame.SRCALPHA)
+        self.image = pygame.transform.smoothscale(self.contenu,(round(self.base_width*self.resize_ratio),round(self.base_height*self.resize_ratio)))
 
-        border_rect = pygame.Rect(0,0, *self.image.get_size())
-        border_rect.center = self.image.get_rect().center
+        self.calc_rect()
+    
 
-        pygame.draw.rect(
-            self.image,
-            self.cur_border_clr,
-            border_rect,
-            round(self.cur_border_width)
-        )
+    def calc_rect(self):
+        """
+        Recalcul du rectangle du sprite (ses coordonnées).
+        """
 
-        contenu = pygame.image.load(os.path.join(os.getcwd(),'images',*self.name)).convert_alpha()
-        contenu = pygame.transform.smoothscale(contenu,(round(self.width),round(self.height)))
-
-        self.image.blit(contenu,contenu.get_rect(center=self.image.get_rect().center))
-        
         pos = [round(i) for i in self.pos]
         if self.placement_mode == "topleft":
             self.rect = self.image.get_rect(topleft=pos)
@@ -124,9 +104,8 @@ class Image(pygame.sprite.Sprite):
         self.winsize = new_winsize
 
         self.ratio = self.winsize[0] / self.old_winsize[0]
-        self.width = self.width*self.ratio
-        self.height = self.height*self.ratio
-        self.cur_border_width = self.cur_border_width*self.ratio
+        self.base_width = self.base_width*self.ratio
+        self.base_height = self.base_height*self.ratio
         self.pos = [i*self.ratio for i in self.pos]
         
         self.calc_image()

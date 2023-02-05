@@ -13,7 +13,7 @@ from classes.deck import Deck
 from classes.card import Card
 from classes.game import Game
 from classes.button import Button
-from classes.moving_image import Moving_image
+from classes.dynamic_image import Dynamic_image
 pygame.init()
 
 all_group = pygame.sprite.Group()
@@ -56,18 +56,17 @@ pioche_button = Button(
     living = False
 )
 
-pioche_fleche = Moving_image(
+pioche_fleche = Dynamic_image(
     name=["arrow.png"],
     winsize=assets.BASE_SIZE,
     scale_axis=['x',55],
     loc=[[220,85],"center"],
-    alt_pos = [250,85],
-    ease_seconds = [assets.DRAW_PILE_ARROW_ANIMATION_SECONDS]*2,
-    ease_modes = ['linear','linear'],
     layer=9,
     parent_groups = [all_group,to_draw_group],
     living = False
 )
+pioche_fleche.translate([[220,85],[250,85],[220,85]],[assets.DRAW_PILE_ARROW_ANIMATION_SECONDS]*2,['linear','linear'])
+
 
 dark_background = Box(
     winsize = assets.BASE_SIZE,
@@ -637,7 +636,6 @@ def click_manage(button:Button,new_winsize):
         
     if button is play_card_button:
 
-        print(last_played_card.value)
         dark_background.kill()
         playable_card_box.kill()
         keep_card_button.kill()

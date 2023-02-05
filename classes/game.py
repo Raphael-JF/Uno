@@ -34,7 +34,6 @@ class Game(pygame.sprite.Sprite):
         dest_midtop_x_extremums = [round(self.pos[0]*29/30),round(self.pos[0]*31/30)]
         dest_midtop_y_extremums = [round(self.pos[1]*29/30),round(self.pos[1]*31/30)]
         dest_midtop = [random.randint(*dest_midtop_x_extremums),random.randint(*dest_midtop_y_extremums)-card.height//2]
-        print(dest_midtop)
         degrees = round(random.uniform(-7.5,7.5),2)
         
         card.move_to(dest_midtop,ease_seconds,ease_mode)
