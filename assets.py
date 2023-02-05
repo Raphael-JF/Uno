@@ -12,9 +12,23 @@ BASE_CARD_SIZE = [325,500] # taille initiale des images de cartes
 CARD_SIZE = [72,112] # taille des cartes selon BASE_SIZE
 
 DECK1_MIDTOP = [400,366] # coordonnées du midtop de la zone du paquet du bas
-DECK2_MIDTOP = [750,225] # coordonnées du midleft de la zone du paquet de droite (on écrit midtop car techniquement c'est le midtop mais avant de subir une rotation antihoraire de 90°)
-DECK3_MIDTOP = [400,50] # coordonnées du midbottom de la zone du paquet du haut (on écrit midtop car techniquement c'est le midtop mais avant de subir une rotation antihoraire de 180°)
-DECK4_MIDTOP = [50,225] # coordonnées du midright de la zone du paquet de gauche (on écrit midtop car techniquement c'est le midtop mais avant de subir une rotation antihoraire de 270°)
+DECK2_MIDTOP = [750,225] # coordonnées du midleft de la zone du paquet de droite (on écrit midtop car techniquement c'est le milieu du haut de la carte malgré la rotation antihoraire de 90°)
+DECK3_MIDTOP = [400,50] # coordonnées du midbottom de la zone du paquet du haut (on écrit midtop car techniquement c'est le milieu du haut de la carte malgré la rotation antihoraire de 180°)
+DECK4_MIDTOP = [50,225] # coordonnées du midright de la zone du paquet de gauche (on écrit midtop car techniquement c'est le milieu du haut de la carte malgré la rotation antihoraire de 270)
+
+DRAW_PILE_CENTER = [110,75] # centre de la pioche selon BASE_SIZE
+DRAW_PILE_DEGREES = 0 # angle d'inclinaison de la pioche
+HOVERED_DECK_ELEVATION_PX = 25 #hauteur que prend le paquet entier pour indiquer qu'il faut jouer
+HOVERED_CARD_ELEVATION_PX = 25 # hauteur que prend une carte survolée dans le paquet selon BASE_SIZE
+SUGGESTED_CARD_ELEVATION_PX = 15 # hauteur que prend une carte suggérée dans le paquet selon BASE_SIZE
+
+CARDS_ELEVATION_SIZE_RATIO = 1.1 #ratio de taille pour les cartes dont le paquet est surélevé
+
+
+GAME_PILE_CENTER = [400,200] # centre de la surface de la pile de jeu selon BASE_SIZE
+GAME_PILE_SIZE = [140,140] # dimensions de la surface de la pile de jeu
+GAME_PILE_HITBOX = [250,150] # dimensions du rectangle de réactivité sur lequel la carte est sensible
+
 
 
 SIMPLE_CARDS = [ #cartes numérotées
@@ -49,18 +63,6 @@ PLAYER_NAME_RESIZING_ANIMATION_SECONDS = 0.5 # durée de l'animation de rétréc
 DRAW_PILE_ARROW_ANIMATION_SECONDS = 0.5 # durée de l'animation de mouvement de la flèche guidant vers la pioche
 
 
-DRAW_PILE_CENTER = [110,75] # centre de la pioche selon BASE_SIZE
-DRAW_PILE_DEGREES = 0 # angle d'inclinaison de la pioche
-HOVERED_DECK_ELEVATION_PX = 25 #hauteur que prend le paquet entier pour indiquer qu'il faut jouer
-HOVERED_CARD_ELEVATION_PX = 25 # hauteur que prend une carte survolée dans le paquet selon BASE_SIZE
-SUGGESTED_CARD_ELEVATION_PX = 15 # hauteur que prend une carte suggérée dans le paquet selon BASE_SIZE
-
-CARDS_ELEVATION_SIZE_RATIO = 1.1 #ratio de taille pour les cartes dont le paquet est surélevé
-
-
-GAME_PILE_CENTER = [400,200] # centre de la surface de la pile de jeu selon BASE_SIZE
-GAME_PILE_SIZE = [140,140] # dimensions de la surface de la pile de jeu
-GAME_PILE_HITBOX = [250,150] # dimensions du rectangle de réactivité sur lequel la carte est sensible
 
 
 # ALL_CARDS = ["wild"]*15

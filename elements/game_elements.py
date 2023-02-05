@@ -60,12 +60,12 @@ pioche_fleche = Dynamic_image(
     name=["arrow.png"],
     winsize=assets.BASE_SIZE,
     scale_axis=['x',55],
-    loc=[[220,85],"center"],
+    loc=[[220,85],"midleft"],
     layer=9,
     parent_groups = [all_group,to_draw_group],
     living = False
 )
-pioche_fleche.translate([[220,85],[250,85],[220,85]],[assets.DRAW_PILE_ARROW_ANIMATION_SECONDS]*2,['linear','linear'])
+pioche_fleche.translate([[161,assets.DRAW_PILE_CENTER[1]],[191,assets.DRAW_PILE_CENTER[1]],[161,assets.DRAW_PILE_CENTER[1]]],[assets.DRAW_PILE_ARROW_ANIMATION_SECONDS]*2,['linear','linear'])
 
 
 dark_background = Box(
@@ -440,7 +440,7 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
                     pioche_button.liven()
                     pioche_fleche.liven()
                     pseudo1.set_highlight()
-                    
+
             elif event.key == pygame.K_ESCAPE:
                 return 0
                 
@@ -483,6 +483,8 @@ def timer_handling(id,infos = None):
         green_button.liven()
         dark_background.liven()
         cancel_wild.liven()
+        pioche_button.kill()
+        pioche_fleche.kill()
     
 
 def update_pseudos():
@@ -560,6 +562,8 @@ def click_manage(button:Button,new_winsize):
         green_button.kill()
         dark_background.kill()
         cancel_wild.kill()
+        pioche_button.liven()
+        pioche_fleche.liven()
         if button is red_button:
             last_played_card.set_wild_color("r")
             apply_clrval_to_decks("r",None)
@@ -582,6 +586,8 @@ def click_manage(button:Button,new_winsize):
         green_button.kill()
         dark_background.kill()
         cancel_wild.kill()
+        pioche_button.liven()
+        pioche_fleche.liven()
         deck1.add_card(last_played_card)
         last_played_card.resize(assets.CARDS_ELEVATION_SIZE_RATIO,assets.CARDS_SORTING_ANIMATION_SECONDS,"out")
         deck1.arrange()

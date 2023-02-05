@@ -9,6 +9,8 @@ class Image(pygame.sprite.Sprite):
         scale_axis:list,
         loc:list,
         parent_groups:list,
+        degrees:float = 0,
+        alpha:int = 255,
         layer:int = 0,
         living:bool = True,
     ):
@@ -31,6 +33,8 @@ class Image(pygame.sprite.Sprite):
         self.placement_mode = loc[1]
         self.parent_groups = parent_groups
         self.resize_ratio = 1
+        self.degrees = degrees
+        self.alpha = alpha
         self.contenu = pygame.image.load(os.path.join(os.getcwd(),'images',*name))
         
         if scale_axis[0] == "x":
@@ -47,6 +51,9 @@ class Image(pygame.sprite.Sprite):
         if living:
             self.liven()
 
+        self.calc_image()
+        self.calc_rect()
+
 
     def liven(self):
 
@@ -58,10 +65,14 @@ class Image(pygame.sprite.Sprite):
         """
         Recalcul de la surface du sprite (sa taille).
         """
+        
+        if self.degrees == 0:
+            self.image = pygame.transform.smoothscale(self.contenu,(round(self.base_width*self.resize_ratio),round(self.base_height*self.resize_ratio)))
+        else:
+            self.image = pygame.transform.smoothscale(pygame.transform.rotate(self.contenu,self.degrees),(round(self.base_width*self.resize_ratio),round(self.base_height*self.resize_ratio)))
 
-        self.image = pygame.transform.smoothscale(self.contenu,(round(self.base_width*self.resize_ratio),round(self.base_height*self.resize_ratio)))
-
-        self.calc_rect()
+        if self.alpha != 255:
+            self.image.set_alpha(self.alpha)
     
 
     def calc_rect(self):
@@ -109,3 +120,4 @@ class Image(pygame.sprite.Sprite):
         self.pos = [i*self.ratio for i in self.pos]
         
         self.calc_image()
+        self.calc_rect()
