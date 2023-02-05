@@ -648,7 +648,6 @@ def click_manage(button:Button,new_winsize):
             blue_button.liven()
             green_button.liven()
             dark_background.liven()
-            cancel_wild.liven()
         else:
             game.card_played(last_played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
             end_of_turn()
@@ -664,7 +663,7 @@ def click_manage(button:Button,new_winsize):
         deck1.arrange()
         deck1.shift_cards(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS,"out")
         deck1.rotate_cards(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS,"inout")
-        timers.append(Timer(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS*0.75,"end_of_turn"))
+        timers.append(Timer(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS*0.65,"end_of_turn"))
         
             
 

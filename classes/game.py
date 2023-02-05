@@ -97,4 +97,4 @@ class Game(pygame.sprite.Sprite):
 
     def playable(self,card:Card):
 
-        return card.value == self.value or card.color == self.color or card.value in ["wild", "wild4"]
+        return card.value == self.value or card.color == self.color or card.value in ["wild", "4wild"]
