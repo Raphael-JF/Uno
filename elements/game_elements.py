@@ -67,6 +67,17 @@ pioche_fleche = Dynamic_image(
 )
 pioche_fleche.translate([[161,assets.DRAW_PILE_CENTER[1]],[191,assets.DRAW_PILE_CENTER[1]],[161,assets.DRAW_PILE_CENTER[1]]],[assets.DRAW_PILE_ARROW_ANIMATION_SECONDS]*2,['linear','linear'])
 
+fleche4 = Dynamic_image(
+    name=["4arrows.png"],
+    winsize=assets.BASE_SIZE,
+    scale_axis=['x',46],
+    loc=[[66,384],"center"],
+    layer=9,
+    parent_groups = [all_group,to_draw_group],
+    living = True
+)
+
+fleche4.rotate([0,360,360],[1,0.5],["inout",'linear'])
 
 dark_background = Box(
     winsize = assets.BASE_SIZE,
