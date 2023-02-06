@@ -16,6 +16,7 @@ class Game(pygame.sprite.Sprite):
         self.timers:list[Timer] = []
         self._layer = 2
         self.color = None
+        self.clockwise_direction = random.choice([True, False])
 
         self.calc_surf()
 
@@ -27,6 +28,9 @@ class Game(pygame.sprite.Sprite):
 
 
     def card_played(self,card:Card,ease_seconds,ease_mode):
+
+        if card.value == "reverse":
+            self.clockwise_direction = not self.clockwise_direction
     
         self.color = card.get_color()
         self.value = card.get_value()

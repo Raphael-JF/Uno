@@ -37,7 +37,7 @@ class Deck():
         self.resize_ratio = 1
         self.pile_color = None
         self.pile_value = None
-        
+        self.interactable = True
 
     def set_infos(self,mode,name):
 
@@ -269,6 +269,8 @@ class Deck():
     
     def change_layers(self):
         for i,carte in enumerate(self.cartes):
+            # if carte.clicking:
+            #     carte.set_clicking(False)
             carte.set_layer(10+i)
             for group in self.sprites_group:
                 if type(group) is pygame.sprite.LayeredUpdates:
@@ -361,7 +363,7 @@ class Deck():
     def lower(self):
         
         self.elevated = False
-        self.resize_cards(assets.CARDS_ELEVATION_SIZE_RATIO,assets.DECK_ELEVATION_ANIMATION_SECONDS,'out')
+        self.resize_cards(1,assets.DECK_ELEVATION_ANIMATION_SECONDS,'out')
         
 
     def add_card(self,card:Card):
@@ -382,3 +384,8 @@ class Deck():
             if carte.get_color() == color or carte.get_value() in ["wild", "4wild"] or carte.get_value() == value:
                 self.suggested_cards.append(carte)
         self.shift_cards(assets.CARDS_HOVER_SHIFT_ANIMATION_SECONDS,'out')
+
+
+    def set_interactable(self,state:bool):
+        
+        self.interactable = state

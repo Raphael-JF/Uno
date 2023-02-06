@@ -18,7 +18,7 @@ DECK4_MIDTOP = [50,225] # coordonnées du midright de la zone du paquet de gauch
 
 DRAW_PILE_CENTER = [110,75] # centre de la pioche selon BASE_SIZE
 DRAW_PILE_DEGREES = 0 # angle d'inclinaison de la pioche
-HOVERED_DECK_ELEVATION_PX = 25 #hauteur que prend le paquet entier pour indiquer qu'il faut jouer
+HOVERED_DECK_ELEVATION_PX = 15 #hauteur que prend le paquet entier pour indiquer qu'il faut jouer
 HOVERED_CARD_ELEVATION_PX = 25 # hauteur que prend une carte survolée dans le paquet selon BASE_SIZE
 SUGGESTED_CARD_ELEVATION_PX = 15 # hauteur que prend une carte suggérée dans le paquet selon BASE_SIZE
 

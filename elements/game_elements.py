@@ -345,7 +345,6 @@ to_draw_group.add(first_card)
 
 
 a_qui_le_tour = 0
-clockwise_direction = random.choice([True, False])
 timers = []
 last_played_card = None
 
@@ -368,7 +367,7 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
     hovered_card:Card = (cards_group.get_sprites_at(cursor) or [None])[-1]
 
     if hovered_card:
-        if hovered_card.get_face() == "hidden" or splash_title1.alive() or dark_background.alive():
+        if hovered_card.get_face() == "hidden" or splash_title1.alive() or not deck1.interactable:
             hovered_card = None
 
     for deck in decks:
@@ -432,6 +431,7 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
             if event.key == pygame.K_SPACE:
                 if splash_title1.get_state() in ["showed","appearing"]:
                     swap_decks()
+                    deck1.set_interactable(True)
                     splash_title1.dismiss()
                     splash_title2.dismiss()
                     splash_title3.dismiss()
@@ -465,10 +465,10 @@ def timer_handling(id,infos = None):
         splash_title3.appear()
 
     elif id == "flip_deck1":
+        deck1.change_layers()
         deck1.flip_cards()
 
     elif id == "playable_card":
-        dark_background.liven()
         playable_card_box.liven()
         keep_card_button.liven()
         play_card_button.liven()
@@ -477,6 +477,7 @@ def timer_handling(id,infos = None):
         end_of_turn()
 
     elif id == "liven_wild_buttons":
+        deck1.set_interactable(False)
         red_button.liven()
         yellow_button.liven()
         blue_button.liven()
@@ -489,7 +490,7 @@ def timer_handling(id,infos = None):
 
 def update_pseudos():
 
-    if clockwise_direction:
+    if game.clockwise_direction:
         splash_title2.change_text(deck4.get_infos()[1])
         pseudo1.set_text(deck4.get_infos()[1])
         pseudo2.set_text(deck1.get_infos()[1])
@@ -515,7 +516,7 @@ def swap_decks():
     cartes3 = deck3.get_cards()
     cartes4 = deck4.get_cards()
     
-    if clockwise_direction:
+    if game.clockwise_direction:
         deck1.set_cards(cartes4)
         deck2.set_cards(cartes1)
         deck3.set_cards(cartes2)
@@ -580,6 +581,7 @@ def click_manage(button:Button,new_winsize):
         end_of_turn()
 
     if button is cancel_wild:
+        deck1.set_interactable(True)
         red_button.kill()
         yellow_button.kill()
         blue_button.kill()
@@ -596,6 +598,7 @@ def click_manage(button:Button,new_winsize):
 
     if button is pioche_button:
 
+        deck1.set_interactable(False)
         pioche_button.kill()
         pioche_fleche.kill()
 
@@ -618,6 +621,7 @@ def click_manage(button:Button,new_winsize):
         else:
             deck1.add_card(carte)
             carte.add_timer(Timer(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS/2,"flip",[assets.CARDS_REVERSE_ANIMATION_SECONDS,['in','out']]))
+            carte.resize(assets.CARDS_ELEVATION_SIZE_RATIO,assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS/2,'out')
             deck1.arrange()
             deck1.shift_cards(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS,"out")
             deck1.rotate_cards(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS,"inout")
@@ -625,7 +629,6 @@ def click_manage(button:Button,new_winsize):
         
     if button is play_card_button:
 
-        dark_background.kill()
         playable_card_box.kill()
         keep_card_button.kill()
         play_card_button.kill()
@@ -658,6 +661,8 @@ def click_manage(button:Button,new_winsize):
 
 def end_of_turn():
 
+    if not deck1.interactable:
+        deck1.set_interactable(True)
     deck1.lower()
     pioche_button.kill()
     pioche_fleche.kill()
