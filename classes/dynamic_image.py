@@ -114,7 +114,7 @@ class Dynamic_image(Image):
 
         if degrees[0] == "auto":
             degrees[0] = self.degrees
-        self.rotate_iter_nb = iter_nb
+        self.degrees_iter_nb = iter_nb
         self.degrees_frames = Transition(degrees,ease_seconds,ease_modes)
 
 

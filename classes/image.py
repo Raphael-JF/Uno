@@ -65,11 +65,9 @@ class Image(pygame.sprite.Sprite):
         """
         Recalcul de la surface du sprite (sa taille).
         """
-        
-        if self.degrees == 0:
-            self.image = pygame.transform.smoothscale(self.contenu,(round(self.base_width*self.resize_ratio),round(self.base_height*self.resize_ratio)))
-        else:
-            self.image = pygame.transform.smoothscale(pygame.transform.rotate(self.contenu,self.degrees),(round(self.base_width*self.resize_ratio),round(self.base_height*self.resize_ratio)))
+        self.image = pygame.transform.smoothscale(self.contenu,(round(self.base_width*self.resize_ratio),round(self.base_height*self.resize_ratio)))
+        if self.degrees != 0:
+            self.image = pygame.transform.rotate(self.image,round(self.degrees,2))
 
         if self.alpha != 255:
             self.image.set_alpha(self.alpha)

@@ -59,7 +59,7 @@ pioche_button = Button(
 pioche_fleche = Dynamic_image(
     name=["arrow.png"],
     winsize=assets.BASE_SIZE,
-    scale_axis=['x',55],
+    scale_axis=['x',44],
     loc=[[220,85],"midleft"],
     layer=9,
     parent_groups = [all_group,to_draw_group],
@@ -68,16 +68,15 @@ pioche_fleche = Dynamic_image(
 pioche_fleche.translate([[161,assets.DRAW_PILE_CENTER[1]],[191,assets.DRAW_PILE_CENTER[1]],[161,assets.DRAW_PILE_CENTER[1]]],[assets.DRAW_PILE_ARROW_ANIMATION_SECONDS]*2,['linear','linear'])
 
 fleche4 = Dynamic_image(
-    name=["4arrows.png"],
+    name=["4arrows_clockwise.png"],
     winsize=assets.BASE_SIZE,
-    scale_axis=['x',46],
+    scale_axis=['x',73],
     loc=[[66,384],"center"],
     layer=9,
     parent_groups = [all_group,to_draw_group],
     living = True
 )
-
-fleche4.rotate([0,360,360],[1,0.5],["inout",'linear'])
+fleche4.rotate([360,180,180,0,0],[2,0.5,2,0.5],["inout","linear","inout","linear","inout"])
 
 dark_background = Box(
     winsize = assets.BASE_SIZE,
@@ -450,7 +449,6 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
                     deck1.elevate()
                     pioche_button.liven()
                     pioche_fleche.liven()
-                    pseudo1.set_highlight()
 
             elif event.key == pygame.K_ESCAPE:
                 return 0
@@ -677,6 +675,5 @@ def end_of_turn():
     deck1.lower()
     pioche_button.kill()
     pioche_fleche.kill()
-    pseudo1.set_highlight()
     timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS,"flip_deck1"))
     timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS + assets.CARDS_REVERSE_ANIMATION_SECONDS[0]*2 + 0.5,"appear_splash_titles"))
