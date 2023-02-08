@@ -1,5 +1,3 @@
-from itertools import cycle
-
-a = cycle([1,2,3])
-
-print(list(a)[2])
+elif self.alpha_iter_nb == math.inf:
+                self.cur_alpha_frames = Transition(positions,ease_seconds,ease_modes)
+                self.alpha_iter_nb = iter_nb

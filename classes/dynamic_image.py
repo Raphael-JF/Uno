@@ -138,10 +138,6 @@ class Dynamic_image(Image):
                 transition.resize_extremums(self.ratio)
 
     def translate(self,positions:list,ease_seconds:list,ease_modes:list,iter_nb:int = math.inf):
-
-        for i,val in enumerate(positions):
-            if val == "auto":
-                positions[i] = self.pos[:]
         
         if iter_nb == math.inf:
             self.inf_translate_frames = Transition(positions,ease_seconds,ease_modes)
@@ -152,16 +148,14 @@ class Dynamic_image(Image):
             if self.cur_translate_frames is None or self.translate_iter_nb == 0:
                 self.cur_translate_frames = Transition(positions,ease_seconds,ease_modes)
                 self.translate_iter_nb = iter_nb
+            elif self.translate_iter_nb == math.inf:
+                self.cur_translate_frames = Transition(positions,ease_seconds,ease_modes)
+                self.translate_iter_nb = iter_nb
             else:
-                print("ça va ici")
                 self.translate_frames_list.append((Transition(positions,ease_seconds,ease_modes),iter_nb))
     
 
     def resize(self,size_ratios:list,ease_seconds:list,ease_modes:list,iter_nb:int = math.inf):
-
-        for i,val in enumerate(size_ratios):
-            if val == "auto":
-                size_ratios[i] = self.resize_ratio
         
         if iter_nb == math.inf:
             self.inf_resize_frames = Transition(size_ratios,ease_seconds,ease_modes)
@@ -172,15 +166,14 @@ class Dynamic_image(Image):
             if self.cur_resize_frames is None or self.resize_iter_nb == 0:
                 self.cur_resize_frames = Transition(size_ratios,ease_seconds,ease_modes)
                 self.resize_iter_nb = iter_nb
+            elif self.resize_iter_nb == math.inf:
+                self.cur_resize_frames = Transition(size_ratios,ease_seconds,ease_modes)
+                self.resize_iter_nb = iter_nb
             else:
                 self.resize_frames_list.append((Transition(size_ratios,ease_seconds,ease_modes),iter_nb))
         
 
     def rotate(self,degrees:list,ease_seconds:list,ease_modes:list,iter_nb:int = math.inf):
-
-        for i,val in enumerate(degrees):
-            if val == "auto":
-                degrees[i] = self.degrees
 
         if iter_nb == math.inf:
             self.inf_degrees_frames = Transition(degrees,ease_seconds,ease_modes)
@@ -191,15 +184,14 @@ class Dynamic_image(Image):
             if self.cur_degrees_frames is None or self.degrees_iter_nb == 0:
                 self.cur_degrees_frames = Transition(degrees,ease_seconds,ease_modes)
                 self.degrees_iter_nb = iter_nb
+            elif self.degrees_iter_nb == math.inf:
+                self.cur_degrees_frames = Transition(degrees,ease_seconds,ease_modes)
+                self.degrees_iter_nb = iter_nb
             else:
                 self.degrees_frames_list.append((Transition(degrees,ease_seconds,ease_modes),iter_nb))
 
 
     def change_alphas(self,alphas:list,ease_seconds:list,ease_modes:list,iter_nb:int = math.inf):
-
-        for i,val in enumerate(alphas):
-            if val == "auto":
-                alphas[i] = self.alpha
         
         if iter_nb == math.inf:
             self.inf_alpha_frames = Transition(alphas,ease_seconds,ease_modes)
@@ -208,6 +200,9 @@ class Dynamic_image(Image):
                 self.alpha_iter_nb = math.inf
         else:
             if self.cur_alpha_frames is None or self.alpha_iter_nb == 0:
+                self.cur_alpha_frames = Transition(alphas,ease_seconds,ease_modes)
+                self.alpha_iter_nb = iter_nb
+            elif self.alpha_iter_nb == math.inf:
                 self.cur_alpha_frames = Transition(alphas,ease_seconds,ease_modes)
                 self.alpha_iter_nb = iter_nb
             else:

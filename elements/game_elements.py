@@ -395,9 +395,9 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
             game.card_played(played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
             apply_clrval_to_decks(game.get_color(),game.get_value())
             timers.append(Timer(6,'end_of_turn'))
-            fleche4.translate(["auto","auto",game.pos,game.pos,"auto"],[assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,0.3,1,0.3],['linear','in','linear','out'],1)
+            fleche4.translate([fleche4.pos,fleche4.pos,game.pos,game.pos,fleche4.pos],[assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,0.3,1,0.3],['linear','in','linear','out'],1)
             fleche4.resize([1,1,1.75,1.75,1],[assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,0.3,1,0.3],['linear','in','linear','out'],1)
-            fleche4.rotate([0,0,-1440],[assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS+0.3,1],['linear','in'],1)
+            fleche4.rotate([fleche4.degrees,fleche4.degrees,fleche4.degrees-1440],[assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS+0.3,1],['linear','in'],1)
             timers.append(Timer(assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS+0.3+1/2,'switch_fleche4'))
             fleche4.rotate([0,180,180,360,360],[2,0.5,2,0.5],["inout","linear","inout","linear","inout"])
         else:
@@ -464,11 +464,21 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
                 return 0
             
             elif event.key == pygame.K_b:
-                fleche4.translate(["auto","auto",game.pos,game.pos,"auto"],[assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,0.3,1,0.3],['linear','in','linear','out'],1)
-                fleche4.resize([1,1,1.75,1.75,1],[assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,0.3,1,0.3],['linear','in','linear','out'],1)
-                fleche4.rotate([0,0,-1440],[assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS+0.3,1],['linear','in'],1)
-                timers.append(Timer(assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS+0.3+1/2,'switch_fleche4'))
-                fleche4.rotate([0,180,180,360,360],[2,0.5,2,0.5],["inout","linear","inout","linear","inout"])
+                game.clockwise_direction = not game.clockwise_direction
+                fleche4.translate([fleche4.pos,fleche4.pos,game.pos,game.pos,fleche4.pos],[0.5,0.3,1+0.5,0.3],['linear','in','linear','out'],1)
+                fleche4.resize([1,1,1.75,1.75,1],[0.5,0.3,1+0.5,0.3],['linear','in','linear','out'],1)
+                timers.append(Timer(0.5+0.3+0.5,'switch_fleche4'))
+                if (fleche4.degrees % 360) //2 <= 180:
+                    rot_deg = -720
+                else:
+                    rot_deg = -360
+                if game.clockwise_direction:
+                    fleche4.rotate([fleche4.degrees,fleche4.degrees,fleche4.degrees + rot_deg,fleche4.degrees + rot_deg],[0.5+0.3,1,0.5+0.3],['linear','inout','linear'],1)
+                    fleche4.rotate([0,-180,-180,-360,-360],[2,0.5,2,0.5],["inout","linear","inout","linear","inout"])
+                else:
+                    
+                    fleche4.rotate([fleche4.degrees,fleche4.degrees,fleche4.degrees - rot_deg,fleche4.degrees - rot_deg],[0.5+0.3,1,0.5+0.3],['linear','inout','linear'],1)
+                    fleche4.rotate([0,180,180,360,360],[2,0.5,2,0.5],["inout","linear","inout","linear","inout"])
                 
     if game_infos != None:
         first_card.add_timer(Timer(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS/2,'flip',[assets.CARDS_REVERSE_ANIMATION_SECONDS,['in','out']]))

@@ -39,7 +39,7 @@ class Image(pygame.sprite.Sprite):
         self.contenu = pygame.image.load(os.path.join(os.getcwd(),'images',*name))
 
         self.contenus_list = []
-        for i in alt_names:
+        for i in alt_names + [name]:
             self.contenus_list.append(pygame.image.load(os.path.join(os.getcwd(),'images',*i)))
         self.contenus_cycle = cycle(self.contenus_list)
         
