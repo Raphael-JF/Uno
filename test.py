@@ -1,7 +1,5 @@
-import pygame
+from itertools import cycle
 
-pygame.display.init()
-pygame.display.set_mode((200,120))
+a = cycle([1,2,3])
 
-image = pygame.image.load("images/cartes/hidden.png").convert()
-print(image.get_bitsize())
+print(list(a)[2])

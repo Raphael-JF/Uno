@@ -1,6 +1,6 @@
 import pygame
 import os
-
+from itertools import cycle
 class Image(pygame.sprite.Sprite):
     def __init__(
         self,
@@ -9,6 +9,7 @@ class Image(pygame.sprite.Sprite):
         scale_axis:list,
         loc:list,
         parent_groups:list,
+        alt_names:list[list[str]] = [],
         degrees:float = 0,
         alpha:int = 255,
         layer:int = 0,
@@ -36,6 +37,11 @@ class Image(pygame.sprite.Sprite):
         self.degrees = degrees
         self.alpha = alpha
         self.contenu = pygame.image.load(os.path.join(os.getcwd(),'images',*name))
+
+        self.contenus_list = []
+        for i in alt_names:
+            self.contenus_list.append(pygame.image.load(os.path.join(os.getcwd(),'images',*i)))
+        self.contenus_cycle = cycle(self.contenus_list)
         
         if scale_axis[0] == "x":
             self.base_height = (scale_axis[1]*self.contenu.get_height()) / self.contenu.get_width()
@@ -117,5 +123,15 @@ class Image(pygame.sprite.Sprite):
         self.base_height = self.base_height*self.ratio
         self.pos = [i*self.ratio for i in self.pos]
         
+        self.calc_image()
+        self.calc_rect()
+
+
+    def switch_image(self,index:int=None):
+
+        if index is None:
+            self.contenu = next(self.contenus_cycle)
+        else:
+            self.contenu = self.contenus_list[index]
         self.calc_image()
         self.calc_rect()

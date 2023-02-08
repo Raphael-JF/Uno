@@ -10,25 +10,35 @@ class Dynamic_image(Image):
         scale_axis: list, 
         loc: list, 
         parent_groups: list, 
+        alt_names:list[list[str]] = [],
         degrees:float = 0,
         alpha:int = 255,
         layer: int = 0, 
         living: bool = True,
     ):
 
-        super().__init__(name, winsize, scale_axis, loc, parent_groups, degrees, alpha, layer, living)
+        super().__init__(name, winsize, scale_axis, loc, parent_groups, alt_names, degrees, alpha, layer, living)
 
-        self.resize_frames:Transition = None
-        self.resize_iter_nb = 0
 
-        self.translate_frames:Transition = None
+        self.cur_translate_frames:Transition = None
         self.translate_iter_nb = 0
+        self.translate_frames_list:list[tuple[Transition,int]] = []
+        self.inf_translate_frames:Transition = None
 
-        self.alpha_frames:Transition = None
+        self.cur_resize_frames:Transition = None
+        self.resize_iter_nb = 0
+        self.resize_frames_list:list[tuple[Transition,int]] = []
+        self.inf_resize_frames:Transition = None
+        
+        self.cur_alpha_frames:Transition = None
         self.alpha_iter_nb = 0
+        self.alpha_frames_list:list[tuple[Transition,int]] = []
+        self.inf_alpha_frames:Transition = None
 
-        self.degrees_frames:Transition = None
+        self.cur_degrees_frames:Transition = None
         self.degrees_iter_nb = 0
+        self.degrees_frames_list:list[tuple[Transition,int]] = []
+        self.inf_degrees_frames:Transition = None
 
 
 
@@ -44,36 +54,65 @@ class Dynamic_image(Image):
     def manage_states(self,dt):
 
         calc_both1,calc_both2,calc_image1,calc_rect1 = [False]*4
-
-        if self.resize_iter_nb > 0:
-            self.resize_ratio, calc_both1, finish = self.resize_frames.change_index(dt,self.resize_ratio)
-            if finish:
-                self.resize_iter_nb -= 1
-                if self.resize_iter_nb > 0:
-                    self.resize_frames.reset_index()
-        
         if self.translate_iter_nb > 0:
-            self.pos, calc_rect1, finish = self.translate_frames.change_index(dt,self.pos)
+            self.pos, calc_rect1, finish = self.cur_translate_frames.change_index(dt,self.pos)
             if finish:
+                if self.translate_iter_nb == math.inf and len(self.translate_frames_list) > 0:
+                    
+                    self.cur_translate_frames, self.translate_iter_nb = self.translate_frames_list.pop(0)
                 self.translate_iter_nb -= 1
                 if self.translate_iter_nb > 0:
-                    self.translate_frames.reset_index()
+                    self.cur_translate_frames.reset_index()
+                elif len(self.translate_frames_list) > 0:
+                    print("alors ?")
+                    self.cur_translate_frames, self.translate_iter_nb = self.translate_frames_list.pop(0)
+                elif self.inf_translate_frames:
+                        self.cur_translate_frames = self.inf_translate_frames
+                        self.translate_iter_nb = math.inf
+
+        if self.resize_iter_nb > 0:
+            self.resize_ratio, calc_both1, finish = self.cur_resize_frames.change_index(dt,self.pos)
+            if finish:
+                if self.resize_iter_nb == math.inf and len(self.resize_frames_list) > 0:
+                    self.cur_resize_frames, self.resize_iter_nb = self.resize_frames_list.pop(0)
+                self.resize_iter_nb -= 1
+                if self.resize_iter_nb > 0:
+                    self.cur_resize_frames.reset_index()
+                elif len(self.resize_frames_list) > 0:
+                    self.cur_resize_frames, self.resize_iter_nb = self.resize_frames_list.pop(0)
+                elif self.inf_resize_frames:
+                        self.cur_resize_frames = self.inf_resize_frames
+                        self.resize_iter_nb = math.inf
 
         if self.degrees_iter_nb > 0:
-            self.degrees, calc_both2, finish = self.degrees_frames.change_index(dt,self.pos)
+            self.degrees, calc_both2, finish = self.cur_degrees_frames.change_index(dt,self.pos)
             if finish:
                 self.degrees_iter_nb -= 1
+                if self.degrees_iter_nb == math.inf and len(self.degrees_frames_list) > 0:
+                    self.cur_degrees_frames, self.degrees_iter_nb = self.degrees_frames_list.pop(0)
+                
                 if self.degrees_iter_nb > 0:
-                    self.degrees_frames.reset_index()
+                    self.cur_degrees_frames.reset_index()
+                elif len(self.degrees_frames_list) > 0:
+                    self.cur_degrees_frames, self.degrees_iter_nb = self.degrees_frames_list.pop(0)
+                elif self.inf_degrees_frames:
+                        self.cur_degrees_frames = self.inf_degrees_frames
+                        self.degrees_iter_nb = math.inf
 
         if self.alpha_iter_nb > 0:
-            self.alpha, calc_image1, finish = self.alpha_frames.change_index(dt,self.alpha)
+            self.alpha, calc_image1, finish = self.cur_alpha_frames.change_index(dt,self.pos)
             if finish:
+                if self.alpha_iter_nb == math.inf and len(self.alpha_frames_list) > 0:
+                    self.cur_alpha_frames, self.alpha_iter_nb = self.alpha_frames_list.pop(0)
                 self.alpha_iter_nb -= 1
                 if self.alpha_iter_nb > 0:
-                    self.alpha_frames.reset_index()
+                    self.cur_alpha_frames.reset_index()
+                elif len(self.alpha_frames_list) > 0:
+                    self.cur_alpha_frames, self.alpha_iter_nb = self.alpha_frames_list.pop(0)
+                elif self.inf_alpha_frames:
+                        self.cur_alpha_frames = self.inf_alpha_frames
+                        self.alpha_iter_nb = math.inf
 
-        # calc requests handling
 
         if calc_both1 or calc_both2:
             self.calc_image()
@@ -90,40 +129,86 @@ class Dynamic_image(Image):
     def rescale(self, new_winsize):
 
         super().rescale(new_winsize)
-        if self.translate_frames:
-            self.translate_frames.resize_extremums(self.ratio)
-
+        if self.cur_translate_frames:
+            self.cur_translate_frames.resize_extremums(self.ratio)
+        if self.inf_translate_frames and self.inf_translate_frames is not self.cur_translate_frames:
+            self.inf_translate_frames.resize_extremums(self.ratio)
+        if len(self.translate_frames_list) > 0:
+            for transition,_ in self.translate_frames_list:
+                transition.resize_extremums(self.ratio)
 
     def translate(self,positions:list,ease_seconds:list,ease_modes:list,iter_nb:int = math.inf):
 
-        if positions[0] == "auto":
-            positions[0] = self.pos[:]
-        self.translate_iter_nb = iter_nb
-        self.translate_frames = Transition(positions,ease_seconds,ease_modes)
+        for i,val in enumerate(positions):
+            if val == "auto":
+                positions[i] = self.pos[:]
+        
+        if iter_nb == math.inf:
+            self.inf_translate_frames = Transition(positions,ease_seconds,ease_modes)
+            if self.cur_translate_frames is None or self.translate_iter_nb == 0:
+                self.cur_translate_frames = self.inf_translate_frames
+                self.translate_iter_nb = math.inf
+        else:
+            if self.cur_translate_frames is None or self.translate_iter_nb == 0:
+                self.cur_translate_frames = Transition(positions,ease_seconds,ease_modes)
+                self.translate_iter_nb = iter_nb
+            else:
+                print("ça va ici")
+                self.translate_frames_list.append((Transition(positions,ease_seconds,ease_modes),iter_nb))
     
 
     def resize(self,size_ratios:list,ease_seconds:list,ease_modes:list,iter_nb:int = math.inf):
 
-        if size_ratios[0] == "auto":
-            size_ratios[0] = self.resize_ratio
-        self.resize_iter_nb = iter_nb
-        self.resize_frames = Transition(size_ratios,ease_seconds,ease_modes)
+        for i,val in enumerate(size_ratios):
+            if val == "auto":
+                size_ratios[i] = self.resize_ratio
+        
+        if iter_nb == math.inf:
+            self.inf_resize_frames = Transition(size_ratios,ease_seconds,ease_modes)
+            if self.cur_resize_frames is None or self.resize_iter_nb == 0:
+                self.cur_resize_frames = self.inf_resize_frames
+                self.resize_iter_nb = math.inf
+        else:
+            if self.cur_resize_frames is None or self.resize_iter_nb == 0:
+                self.cur_resize_frames = Transition(size_ratios,ease_seconds,ease_modes)
+                self.resize_iter_nb = iter_nb
+            else:
+                self.resize_frames_list.append((Transition(size_ratios,ease_seconds,ease_modes),iter_nb))
         
 
     def rotate(self,degrees:list,ease_seconds:list,ease_modes:list,iter_nb:int = math.inf):
 
-        if degrees[0] == "auto":
-            degrees[0] = self.degrees
-        self.degrees_iter_nb = iter_nb
-        self.degrees_frames = Transition(degrees,ease_seconds,ease_modes)
+        for i,val in enumerate(degrees):
+            if val == "auto":
+                degrees[i] = self.degrees
+
+        if iter_nb == math.inf:
+            self.inf_degrees_frames = Transition(degrees,ease_seconds,ease_modes)
+            if self.cur_degrees_frames is None or self.degrees_iter_nb == 0:
+                self.cur_degrees_frames = self.inf_degrees_frames
+                self.degrees_iter_nb = math.inf
+        else:
+            if self.cur_degrees_frames is None or self.degrees_iter_nb == 0:
+                self.cur_degrees_frames = Transition(degrees,ease_seconds,ease_modes)
+                self.degrees_iter_nb = iter_nb
+            else:
+                self.degrees_frames_list.append((Transition(degrees,ease_seconds,ease_modes),iter_nb))
 
 
     def change_alphas(self,alphas:list,ease_seconds:list,ease_modes:list,iter_nb:int = math.inf):
 
-        if alphas[0] == "auto":
-            alphas[0] = self.alpha
-        self.alpha_iter_nb = iter_nb
-        self.alpha_frames = Transition(alphas,ease_seconds,ease_modes)
-
-
-    
+        for i,val in enumerate(alphas):
+            if val == "auto":
+                alphas[i] = self.alpha
+        
+        if iter_nb == math.inf:
+            self.inf_alpha_frames = Transition(alphas,ease_seconds,ease_modes)
+            if self.cur_alpha_frames is None or self.alpha_iter_nb == 0:
+                self.cur_alpha_frames = self.inf_alpha_frames
+                self.alpha_iter_nb = math.inf
+        else:
+            if self.cur_alpha_frames is None or self.alpha_iter_nb == 0:
+                self.cur_alpha_frames = Transition(alphas,ease_seconds,ease_modes)
+                self.alpha_iter_nb = iter_nb
+            else:
+                self.alpha_frames_list.append((Transition(alphas,ease_seconds,ease_modes),iter_nb))

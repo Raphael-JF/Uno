@@ -18,9 +18,10 @@ class Manager():
         self.last_time = pygame.time.get_ticks()/1000
         self.state = "start_menu"
         self.screen_size=itertools.cycle([
-            
             [960,540],
+            
             [800,450],
+            
             [1600,900],
             [1920,1080],
             
