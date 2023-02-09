@@ -16,7 +16,7 @@ class Game(pygame.sprite.Sprite):
         self.timers:list[Timer] = []
         self._layer = 2
         self.color = None
-        self.clockwise_direction = random.choice([True, False])
+        self.clockwise_direction = True
 
         self.calc_surf()
 
