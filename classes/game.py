@@ -16,7 +16,9 @@ class Game(pygame.sprite.Sprite):
         self.timers:list[Timer] = []
         self._layer = 2
         self.color = None
+        self.value = None
         self.clockwise_direction = True
+        self.draw_pile = assets.ALL_CARDS[:]
 
         self.calc_surf()
 
@@ -88,6 +90,14 @@ class Game(pygame.sprite.Sprite):
             self.image.blit(surface,surface.get_rect(midtop=relative_midtop))
         
     
+    def draw_card(self):
+
+        res = self.draw_pile.pop(random.randint(0,len(self.draw_pile)-1))
+        if len(self.draw_pile) == 0:
+            self.draw_pile = assets.ALL_CARDS[:]
+        return res
+
+
     def get_color(self):
 
         return self.color
@@ -101,3 +111,8 @@ class Game(pygame.sprite.Sprite):
     def playable(self,card:Card):
 
         return card.value == self.value or card.color == self.color or card.value in ["wild", "4wild"]
+
+    def pop_value(self):
+        res = self.value
+        self.value = None
+        return res

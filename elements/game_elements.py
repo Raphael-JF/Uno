@@ -13,6 +13,7 @@ from classes.deck import Deck
 from classes.card import Card
 from classes.game import Game
 from classes.button import Button
+from classes.title import Title
 from classes.dynamic_image import Dynamic_image
 pygame.init()
 
@@ -89,6 +90,29 @@ dark_background = Box(
     parent_groups = [all_group,to_draw_group],
     living = False
 )
+
+dark_area = Dynamic_image(
+    name=["dark_area.png"],
+    winsize=assets.BASE_SIZE,
+    scale_axis=['x',550],
+    alpha = 255,
+    loc=[assets.GAME_PILE_CENTER,"center"],
+    layer=5000,
+    parent_groups = [all_group,to_draw_group],
+    living = False
+)
+
+skip_logo = Dynamic_image(
+    name=["skip_logo.png"],
+    winsize=assets.BASE_SIZE,
+    scale_axis=['x',125],
+    alpha = 255,
+    loc=[assets.GAME_PILE_CENTER,"center"],
+    layer=5001,
+    parent_groups = [all_group,to_draw_group],
+    living = False
+)
+
 
 splash_title1 = Splash_title(
     winsize = assets.BASE_SIZE,
@@ -336,17 +360,32 @@ keep_card_button = Button(
     living = False
 )
 
-
-deck1 = Deck(assets.BASE_SIZE,0,assets.DECK1_MIDTOP,400,[all_group,to_draw_group,cards_group],False)
-deck2 = Deck(assets.BASE_SIZE,90,assets.DECK2_MIDTOP,225,[all_group,to_draw_group,cards_group],False)
-deck3 = Deck(assets.BASE_SIZE,180,assets.DECK3_MIDTOP,400,[all_group,to_draw_group,cards_group],False)
-deck4 = Deck(assets.BASE_SIZE,270,assets.DECK4_MIDTOP,225,[all_group,to_draw_group,cards_group],False)
-decks = [deck1,deck2,deck3,deck4]
-
+suivant = Title(
+    winsize = assets.BASE_SIZE, 
+    loc = [(570,220),"center"], 
+    background_clr = (235,235,235),
+    size = [60 ,18],
+    border=[2,(25,25,25),0,"inset"],
+    text = "Suivant",
+    font_clrs = [(25,25,25)],
+    font_size = 18,
+    font_family = "RopaSans-Regular.ttf",
+    layer = 2,
+    parent_groups = [all_group,to_draw_group]
+)
 
 game = Game()
 all_group.add(game)
 to_draw_group.add(game)
+
+deck1 = Deck(assets.BASE_SIZE,0,assets.DECK1_MIDTOP,400,[all_group,to_draw_group,cards_group],False,game)
+deck2 = Deck(assets.BASE_SIZE,90,assets.DECK2_MIDTOP,225,[all_group,to_draw_group,cards_group],False,game)
+deck3 = Deck(assets.BASE_SIZE,180,assets.DECK3_MIDTOP,400,[all_group,to_draw_group,cards_group],False,game)
+deck4 = Deck(assets.BASE_SIZE,270,assets.DECK4_MIDTOP,225,[all_group,to_draw_group,cards_group],False,game)
+decks = [deck1,deck2,deck3,deck4]
+
+
+
 
 first_card = Card([assets.DRAW_PILE_CENTER,'midtop'],random.choice(assets.SIMPLE_CARDS),2,None)
 cards_group.add(first_card)
@@ -395,6 +434,7 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
             game.card_played(played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
             apply_clrval_to_decks(game.get_color(),game.get_value())
             rotate_animation()
+            timers.append(Timer(2.6,'end_of_turn'))
         else:
             game.card_played(played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
             apply_clrval_to_decks(game.get_color(),game.get_value())
@@ -446,21 +486,38 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
             if event.key == pygame.K_SPACE:
                 if splash_title1.get_state() in ["showed","appearing"]:
                     swap_decks()
-                    deck1.set_interactable(True)
                     splash_title1.dismiss()
                     splash_title2.dismiss()
                     splash_title3.dismiss()
-                    timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS,"flip_deck1"))
-                    deck1.elevate()
-                    pioche_button.liven()
-                    pioche_fleche.liven()
+                
+                    value = game.pop_value()
+                    if value == "skip":
+                        deck1.set_interactable(False)
+                        skip_animation(0.75)
+                        timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS,"flip_deck1"))
+                    elif value == "+2":
+                        deck1.set_interactable(False)
+                        skip_animation(assets.CARDS_DRAWING_DELAY_SECONDS + assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS)
+                        timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS,"flip_deck1"))
+                        timers.append(Timer(0.625 + assets.DECK_ELEVATION_ANIMATION_SECONDS,'draw_cards',[2,True]))
+                    elif value == "4wild":
+                        deck1.set_interactable(False)
+                        skip_animation(assets.CARDS_DRAWING_DELAY_SECONDS*3 + assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS)
+                        timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS,"flip_deck1"))
+                        timers.append(Timer(0.625 + assets.DECK_ELEVATION_ANIMATION_SECONDS,'draw_cards',[4,True]))
+                    else:
+                        fleche4.liven()
+                        deck1.set_interactable(True)
+                        timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS,"flip_deck1"))
+                        deck1.elevate()
+                        pioche_button.liven()
+                        pioche_fleche.liven()
 
             elif event.key == pygame.K_ESCAPE:
                 return 0
             
             elif event.key == pygame.K_b:
-                game.clockwise_direction = not game.clockwise_direction
-                rotate_animation()
+                skip_animation(0.75)
                 
     if game_infos != None:
         first_card.add_timer(Timer(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS/2,'flip',[assets.CARDS_REVERSE_ANIMATION_SECONDS,['in','out']]))
@@ -481,6 +538,7 @@ def timer_handling(id,infos = None):
         splash_title1.appear()
         splash_title2.appear()
         splash_title3.appear()
+        fleche4.kill()
 
     elif id == "flip_deck1":
         deck1.change_layers()
@@ -507,6 +565,9 @@ def timer_handling(id,infos = None):
 
     elif id == "switch_fleche4":
         fleche4.switch_image()
+
+    elif id == "draw_cards":
+        deck1.draw_cards(*infos)
 
 def update_pseudos():
 
@@ -617,7 +678,6 @@ def click_manage(button:Button,new_winsize):
         deck1.rotate_cards(assets.CARDS_SORTING_ANIMATION_SECONDS,"inout")
 
     if button is pioche_button:
-
         deck1.set_interactable(False)
         pioche_button.kill()
         pioche_fleche.kill()
@@ -626,7 +686,7 @@ def click_manage(button:Button,new_winsize):
         h = assets.CARD_SIZE[1]
 
         pos = [x, y - h/2]
-        valeur = deck1.draw_pile.pop(random.randint(0,len(deck1.draw_pile)-1))
+        valeur = game.draw_card()
         carte = Card([pos,'midtop'],valeur,10,deck1,1)
         all_group.add(carte)
         to_draw_group.add(carte)
@@ -693,7 +753,7 @@ def end_of_turn():
 def rotate_animation():
 
     fleche4.translate([fleche4.pos,fleche4.pos,game.pos,game.pos,fleche4.pos],[0.5,0.3,1+0.5,0.3],['linear','in','linear','out'],1)
-    fleche4.resize([1,1,1.75,1.75,1],[0.5,0.3,1+0.5,0.3],['linear','in','linear','out'],1)
+    fleche4.resize([1,1,2.5,2.5,1],[0.5,0.3,1+0.5,0.3],['linear','in','linear','out'],1)
     timers.append(Timer(0.5+0.3+0.5,'switch_fleche4'))
     if (fleche4.degrees % 360) //2 <= 180:
         rot_deg = -720
@@ -706,3 +766,15 @@ def rotate_animation():
         
         fleche4.rotate([fleche4.degrees,fleche4.degrees,fleche4.degrees - rot_deg,fleche4.degrees - rot_deg],[0.5+0.3,1,0.5+0.3],['linear','inout','linear'],1)
         fleche4.rotate([0,180,180,360,360],[2,0.5,2,0.5],["inout","linear","inout","linear","inout"])
+    
+
+def skip_animation(skip_seconds):
+    skip_logo.liven()
+    skip_logo.change_alphas([0,0,255,255,0],[0.575,0.75,skip_seconds,0.75],['linear','inout','linear','inout'],1)
+    skip_logo.resize([0.25,0.25,1,1,0.25],[0.575,0.75,skip_seconds,0.75],['linear','inout','linear','inout'],1)
+    dark_area.liven()
+    dark_area.change_alphas([0,0,191,191,0],[0.575,0.75,skip_seconds,0.75],['linear','inout','linear','inout'],1)
+    dark_area.resize([0.25,0.25,1,1,0.25],[0.575,0.75,skip_seconds,0.75],['linear','inout','linear','inout'],1)
+    timers.append(Timer(1.325+skip_seconds,'end_of_turn'))
+
+    

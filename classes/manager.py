@@ -4,7 +4,7 @@ import sys
 import itertools
 
 import elements.start_menu as start_menu
-import elements.nouvelle_partie as nouvelle_partie
+import elements.new_game as new_game
 import elements.game_elements as game_elements
 import assets
 
@@ -87,10 +87,10 @@ class Manager():
         Instructions du menu de création de nouvelle partie. action désigne l'action utilisateur (sur quel bouton il a apppuyé et dans quel menu doit il se rendre par conséquent)
         """
 
-        action = nouvelle_partie.loop(self.win,self.current_winsize,self.dt,self.fps)
+        action = new_game.loop(self.win,self.current_winsize,self.dt,self.fps)
         if type(action) is dict:
             self.game_info = action
-            importlib.reload(nouvelle_partie)
+            importlib.reload(new_game)
             self.state = "game"
             self.first_looping = True
         if action == 1:

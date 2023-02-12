@@ -63,6 +63,3 @@ PLAYER_NAME_RESIZING_ANIMATION_SECONDS = 0.5 # durée de l'animation de rétréc
 DRAW_PILE_ARROW_ANIMATION_SECONDS = 0.5 # durée de l'animation de mouvement de la flèche guidant vers la pioche
 
 
-
-
-# ALL_CARDS = ["wild"]*15

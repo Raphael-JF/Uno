@@ -4,7 +4,7 @@ import assets,pygame,random
 
 class Deck():
 
-    def __init__(self,winsize:list,deck_degrees:int|float,deck_midtop:list,deck_width:int,sprites_groups:list[pygame.sprite.LayeredUpdates],showed:bool):
+    def __init__(self,winsize:list,deck_degrees:int|float,deck_midtop:list,deck_width:int,sprites_groups:list[pygame.sprite.LayeredUpdates],showed:bool,game):
         """
         self.card_size -> la taille souhaitée pour une carte, à l'échelle de winsize.
         deck_degrees -> l'angle prit par la carte centrale du deck.
@@ -21,8 +21,6 @@ class Deck():
         self.deck_midtop = deck_midtop
         self.sprites_group = sprites_groups
         self.cards_to_add = []
-
-        self.draw_pile = assets.ALL_CARDS[:]
         self.timers = []
         self.winsize = winsize
         self.showed = showed
@@ -38,6 +36,7 @@ class Deck():
         self.pile_color = None
         self.pile_value = None
         self.interactable = True
+        self.game = game
 
     def set_infos(self,mode,name):
 
@@ -138,7 +137,7 @@ class Deck():
 
         layer = 10
         for i in range(number_of_cards):
-            valeur = self.draw_pile.pop(random.randint(0,len(self.draw_pile)-1))
+            valeur = self.game.draw_card()
             carte = Card([pos,placement_mode],valeur,layer,self,self.resize_ratio)
             carte.rescale(self.winsize)
             for group in self.sprites_group:
