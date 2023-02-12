@@ -64,7 +64,6 @@ class Dynamic_image(Image):
                 if self.translate_iter_nb > 0:
                     self.cur_translate_frames.reset_index()
                 elif len(self.translate_frames_list) > 0:
-                    print("alors ?")
                     self.cur_translate_frames, self.translate_iter_nb = self.translate_frames_list.pop(0)
                 elif self.inf_translate_frames:
                         self.cur_translate_frames = self.inf_translate_frames
@@ -113,6 +112,8 @@ class Dynamic_image(Image):
                         self.cur_alpha_frames = self.inf_alpha_frames
                         self.alpha_iter_nb = math.inf
 
+        if self.alpha == 0 and self.alpha_iter_nb == 0:
+            self.kill()
 
         if calc_both1 or calc_both2:
             self.calc_image()
@@ -121,7 +122,6 @@ class Dynamic_image(Image):
         else:
             if calc_image1:
                 self.calc_image()
-
             if calc_rect1:
                 self.calc_rect()
 
@@ -137,73 +137,76 @@ class Dynamic_image(Image):
             for transition,_ in self.translate_frames_list:
                 transition.resize_extremums(self.ratio)
 
-    def translate(self,positions:list,ease_seconds:list,ease_modes:list,iter_nb:int = math.inf):
+    def translate(self,values:list,ease_seconds:list,ease_modes:list,iter_nb:int = math.inf):
         
         if iter_nb == math.inf:
-            self.inf_translate_frames = Transition(positions,ease_seconds,ease_modes)
+            self.inf_translate_frames = Transition(values,ease_seconds,ease_modes)
             if self.cur_translate_frames is None or self.translate_iter_nb == 0:
                 self.cur_translate_frames = self.inf_translate_frames
                 self.translate_iter_nb = math.inf
         else:
             if self.cur_translate_frames is None or self.translate_iter_nb == 0:
-                self.cur_translate_frames = Transition(positions,ease_seconds,ease_modes)
+                self.cur_translate_frames = Transition(values,ease_seconds,ease_modes)
                 self.translate_iter_nb = iter_nb
             elif self.translate_iter_nb == math.inf:
-                self.cur_translate_frames = Transition(positions,ease_seconds,ease_modes)
+                self.cur_translate_frames = Transition(values,ease_seconds,ease_modes)
                 self.translate_iter_nb = iter_nb
             else:
-                self.translate_frames_list.append((Transition(positions,ease_seconds,ease_modes),iter_nb))
+                self.translate_frames_list.append((Transition(values,ease_seconds,ease_modes),iter_nb))
     
 
-    def resize(self,size_ratios:list,ease_seconds:list,ease_modes:list,iter_nb:int = math.inf):
+    def resize(self,values:list,ease_seconds:list,ease_modes:list,iter_nb:int = math.inf):
         
         if iter_nb == math.inf:
-            self.inf_resize_frames = Transition(size_ratios,ease_seconds,ease_modes)
+            self.inf_resize_frames = Transition(values,ease_seconds,ease_modes)
             if self.cur_resize_frames is None or self.resize_iter_nb == 0:
                 self.cur_resize_frames = self.inf_resize_frames
                 self.resize_iter_nb = math.inf
         else:
             if self.cur_resize_frames is None or self.resize_iter_nb == 0:
-                self.cur_resize_frames = Transition(size_ratios,ease_seconds,ease_modes)
+                self.cur_resize_frames = Transition(values,ease_seconds,ease_modes)
                 self.resize_iter_nb = iter_nb
             elif self.resize_iter_nb == math.inf:
-                self.cur_resize_frames = Transition(size_ratios,ease_seconds,ease_modes)
+                self.cur_resize_frames = Transition(values,ease_seconds,ease_modes)
                 self.resize_iter_nb = iter_nb
             else:
-                self.resize_frames_list.append((Transition(size_ratios,ease_seconds,ease_modes),iter_nb))
+                self.resize_frames_list.append((Transition(values,ease_seconds,ease_modes),iter_nb))
         
 
-    def rotate(self,degrees:list,ease_seconds:list,ease_modes:list,iter_nb:int = math.inf):
+    def rotate(self,values:list,ease_seconds:list,ease_modes:list,iter_nb:int = math.inf):
 
         if iter_nb == math.inf:
-            self.inf_degrees_frames = Transition(degrees,ease_seconds,ease_modes)
+            self.inf_degrees_frames = Transition(values,ease_seconds,ease_modes)
             if self.cur_degrees_frames is None or self.degrees_iter_nb == 0:
                 self.cur_degrees_frames = self.inf_degrees_frames
                 self.degrees_iter_nb = math.inf
         else:
             if self.cur_degrees_frames is None or self.degrees_iter_nb == 0:
-                self.cur_degrees_frames = Transition(degrees,ease_seconds,ease_modes)
+                self.cur_degrees_frames = Transition(values,ease_seconds,ease_modes)
                 self.degrees_iter_nb = iter_nb
             elif self.degrees_iter_nb == math.inf:
-                self.cur_degrees_frames = Transition(degrees,ease_seconds,ease_modes)
+                self.cur_degrees_frames = Transition(values,ease_seconds,ease_modes)
                 self.degrees_iter_nb = iter_nb
             else:
-                self.degrees_frames_list.append((Transition(degrees,ease_seconds,ease_modes),iter_nb))
+                self.degrees_frames_list.append((Transition(values,ease_seconds,ease_modes),iter_nb))
 
 
-    def change_alphas(self,alphas:list,ease_seconds:list,ease_modes:list,iter_nb:int = math.inf):
-        
+    def change_alpha(self,values:list,ease_seconds:list,ease_modes:list,iter_nb:int = math.inf):
+
+        if not self.alive():
+            self.liven()
+
         if iter_nb == math.inf:
-            self.inf_alpha_frames = Transition(alphas,ease_seconds,ease_modes)
+            self.inf_alpha_frames = Transition(values,ease_seconds,ease_modes)
             if self.cur_alpha_frames is None or self.alpha_iter_nb == 0:
                 self.cur_alpha_frames = self.inf_alpha_frames
                 self.alpha_iter_nb = math.inf
         else:
             if self.cur_alpha_frames is None or self.alpha_iter_nb == 0:
-                self.cur_alpha_frames = Transition(alphas,ease_seconds,ease_modes)
+                self.cur_alpha_frames = Transition(values,ease_seconds,ease_modes)
                 self.alpha_iter_nb = iter_nb
             elif self.alpha_iter_nb == math.inf:
-                self.cur_alpha_frames = Transition(alphas,ease_seconds,ease_modes)
+                self.cur_alpha_frames = Transition(values,ease_seconds,ease_modes)
                 self.alpha_iter_nb = iter_nb
             else:
-                self.alpha_frames_list.append((Transition(alphas,ease_seconds,ease_modes),iter_nb))
+                self.alpha_frames_list.append((Transition(values,ease_seconds,ease_modes),iter_nb))

@@ -62,7 +62,6 @@ class Button_family():
         for button,b_state in self.buttons_state.items():
             if b_state == state:
                 button.reset_style(**self.style_rules[state])
-                button.reset_attributes()
         
 
     def get_state(self,button:Button):
@@ -71,21 +70,21 @@ class Button_family():
         """
 
         if button not in self.buttons_state.keys():
-            raise KeyError("button gived not recognized in this Button_family")
+            raise KeyError("given button not recognized in this Button_family")
 
         return self.buttons_state[button]
 
 
-    def set_state(self,button,state):
+    def set_state(self,button:Button,state):
         """
         Méthode d'écriture d'un état pour un bouton
         """
 
         if state not in self.states:
-            raise KeyError("button gived not recognized in this Button_family")
+            raise KeyError("given button not recognized in this Button_family")
         
         self.buttons_state[button] = state
-        button.reset_style(**self.style_rules[state])
+        button.reset_style(**self.style_rules[state],instant_change=False)
 
 
     def __contains__(self,button):

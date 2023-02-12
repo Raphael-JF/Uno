@@ -19,11 +19,13 @@ class Manager():
         self.state = "start_menu"
         self.screen_size=itertools.cycle([
             [960,540],
+            [1920,1080],
+            
             
             [800,450],
             
             [1600,900],
-            [1920,1080],
+            
             
             
             
@@ -94,7 +96,7 @@ class Manager():
             self.state = "game"
             self.first_looping = True
         if action == 1:
-            importlib.reload(start_menu)
+            importlib.reload(new_game)
             self.state = "start_menu"
 
     def loop_game(self):

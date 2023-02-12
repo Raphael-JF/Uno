@@ -135,7 +135,7 @@ def loop(screen,new_winsize, dt,fps):
 
     cursor = pygame.mouse.get_pos()
 
-    hovered_button = (clickable_group.get_sprites_at(cursor) or [None])[-1]
+    hovered_button:Button = (clickable_group.get_sprites_at(cursor) or [None])[-1]
 
     all_group.update(
         new_winsize = new_winsize, 
@@ -162,7 +162,7 @@ def loop(screen,new_winsize, dt,fps):
 
             if event.button in (pygame.BUTTON_LEFT,pygame.BUTTON_RIGHT): 
                 if hovered_button != None :
-                    if hovered_button.get_clicking():
+                    if hovered_button.clicking:
                         res = click_manage(hovered_button)
                         hovered_button.set_clicking(False)
                         return res
@@ -172,9 +172,6 @@ def loop(screen,new_winsize, dt,fps):
 
 
 def click_manage(button:Button):
-
-    # for but in clickable_group.sprites():
-    #     but.reset_attributes()
 
     if button == charger_partie:
         return 1

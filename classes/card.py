@@ -376,11 +376,6 @@ class Card(pygame.sprite.Sprite):
         self.parent_deck = new_deck
 
 
-    def get_clicking(self):
-
-        return self.clicking
-
-
     def set_clicking(self,clicking):
 
         if self.face == "showed" and self.parent_deck and "flipping" not in self.states :

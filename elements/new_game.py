@@ -357,7 +357,7 @@ def loop(screen,new_winsize, dt,fps):
 
     cursor = pygame.mouse.get_pos()
 
-    hovered_clickable = (clickable_group.get_sprites_at(cursor) or [None])[-1]
+    hovered_clickable:Button|Input_field = (clickable_group.get_sprites_at(cursor) or [None])[-1]
 
     focused_field = None
     for field in fields_group.sprites():
@@ -393,7 +393,7 @@ def loop(screen,new_winsize, dt,fps):
 
             if event.button in (pygame.BUTTON_LEFT,pygame.BUTTON_RIGHT): 
                 if hovered_clickable != None :
-                    if hovered_clickable.get_clicking():
+                    if hovered_clickable.clicking:
                         res = click_manage(hovered_clickable)
                         hovered_clickable.set_clicking(False)
                         return res
@@ -420,10 +420,6 @@ def click_manage(clickable:Input_field|Button):
     
     if type(clickable) is Button:
         if clickable == annuler:
-            # for bouton_famille in boutons_familles:
-            #     bouton_famille.reset_states()
-            # for but in clickable_group.sprites():
-            #     but.reset_attributes()
             return 1
         
         if clickable == creer_partie:
@@ -436,7 +432,7 @@ def click_manage(clickable:Input_field|Button):
                         # 0 : ordi
                         # 1 : humain
 
-                sortie[field.get_text()] = joueur
+                sortie[field.texte] = joueur
             return sortie
 
         for famille in boutons_familles:

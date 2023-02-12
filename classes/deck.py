@@ -286,7 +286,7 @@ class Deck():
     def get_clicking_card(self):
         
         for carte in self.cartes:
-            if carte.get_clicking():
+            if carte.clicking:
                 return carte
 
 

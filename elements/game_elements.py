@@ -80,13 +80,24 @@ fleche4 = Dynamic_image(
 )
 fleche4.rotate([360,180,180,0,0],[2,0.5,2,0.5],["inout","linear","inout","linear","inout"])
 
-dark_background = Box(
+dark_background100 = Box(
     winsize = assets.BASE_SIZE,
     size = [800,450],
     loc = [[0,0],"topleft"],
     background_clr=(0, 0, 0, 100),
     border = [-1,(0,0,0),0,"inset"],
     layer=5000,
+    parent_groups = [all_group,to_draw_group],
+    living = False
+)
+
+dark_background205 = Box(
+    winsize = assets.BASE_SIZE,
+    size = [800,450],
+    loc = [[0,0],"topleft"],
+    background_clr=(0, 0, 0, 205),
+    border = [-1,(0,0,0),0,"inset"],
+    layer=4999,
     parent_groups = [all_group,to_draw_group],
     living = False
 )
@@ -129,6 +140,19 @@ splash_title1 = Splash_title(
     dismiss_ease = [0.5,'out'],
     parent_groups = [all_group,to_draw_group]
 )
+splash_title1 = Title(
+    winsize = assets.BASE_SIZE,
+    loc = [[400,175],"center"],
+    background_clr = [0,0,0,0],
+    font_clrs = [[250,250,250]],
+    font_size = 64,
+    size = [400,150],
+    text = "Au tour de",
+    font_family = "RopaSans-Regular.ttf",
+    layer = 5000,
+    living = False,
+    parent_groups = [all_group,to_draw_group]
+)
 
 splash_title2 = Splash_title(
     winsize = assets.BASE_SIZE,
@@ -145,6 +169,20 @@ splash_title2 = Splash_title(
     dismiss_ease = [0.5,'out'],
     parent_groups = [all_group,to_draw_group]
 )
+splash_title2 = Title(
+    winsize = assets.BASE_SIZE,
+    loc = [[400,225],"center"],
+    background_clr = [0,0,0,0],
+    font_clrs = [[250,250,250]],
+    font_size = 64,
+    size = [400,150],
+    text = "Joueur 1",
+    font_family = "RopaSans-Regular.ttf",
+    layer = 5000,
+    living = False,
+    parent_groups = [all_group,to_draw_group]
+)
+
 splash_title3 = Splash_title(
     winsize = assets.BASE_SIZE,
     text_center = [400,400],
@@ -160,14 +198,26 @@ splash_title3 = Splash_title(
     dismiss_ease = [0.5,'out'],
     parent_groups = [all_group,to_draw_group]
 )
+splash_title3 = Title(
+    winsize = assets.BASE_SIZE,
+    loc = [[400,400],"center"],
+    background_clr = [0,0,0,0],
+    font_clrs = [[250,250,250]],
+    font_size = 30,
+    size = [500,100],
+    text = "Appuyez sur [Espace] pour jouer",
+    font_family = "RopaSans-Regular.ttf",
+    layer = 5000,
+    living = False,
+    parent_groups = [all_group,to_draw_group]
+)
 
-pseudo1 = Player_name(
+pseudo1 = Title(
     winsize = assets.BASE_SIZE,
     loc = [[400,310],'center'],
     background_clr = (191, 23, 29),
     font_clrs = [[255, 237, 238]],
     font_size = 25,
-    border = [-1,(0,0,0),0,'inset'],
     size = [133,27],
     text = "Joueur 1",
     font_family = "RopaSans-Regular.ttf",
@@ -175,13 +225,12 @@ pseudo1 = Player_name(
     parent_groups = [all_group,to_draw_group]
 )
 
-pseudo2 = Player_name(
+pseudo2 = Title(
     winsize = assets.BASE_SIZE,
     loc = [[570,200],'center'],
     background_clr = (191, 23, 29),
     font_clrs = [[255, 237, 238]],
     font_size = 25,
-    border = [-1,(0,0,0),0,'inset'],
     size = [133,27],
     text = "Joueur 2",
     font_family = "RopaSans-Regular.ttf",
@@ -189,13 +238,12 @@ pseudo2 = Player_name(
     parent_groups = [all_group,to_draw_group]
 )
 
-pseudo3 = Player_name(
+pseudo3 = Title(
     winsize = assets.BASE_SIZE,
     loc = [[400,90],'center'],
     background_clr = (191, 23, 29),
     font_clrs = [[255, 237, 238]],
     font_size = 25,
-    border = [-1,(0,0,0),0,'inset'],
     size = [133,27],
     text = "Joueur 3",
     font_family = "RopaSans-Regular.ttf",
@@ -203,13 +251,12 @@ pseudo3 = Player_name(
     parent_groups = [all_group,to_draw_group]
 )
 
-pseudo4 = Player_name(
+pseudo4 = Title(
     winsize = assets.BASE_SIZE,
     loc = [[230,200],'center'],
     background_clr = (191, 23, 29),
     font_clrs = [[255, 237, 238]],
     font_size = 25,
-    border = [-1,(0,0,0),0,'inset'],
     size = [133,27],
     text = "Joueur 4",
     font_family = "RopaSans-Regular.ttf",
@@ -397,7 +444,7 @@ to_draw_group.add(first_card)
 a_qui_le_tour = 0
 timers = []
 last_played_card = None
-
+splash_titles_state = ""
 
 
 def loop(screen,new_winsize, dt,fps,game_infos = None):
@@ -413,7 +460,7 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
         update_pseudos()
 
     cursor = pygame.mouse.get_pos()
-    hovered_button = (buttons_group.get_sprites_at(cursor) or [None])[-1]
+    hovered_button:Button = (buttons_group.get_sprites_at(cursor) or [None])[-1]
     hovered_card:Card = (cards_group.get_sprites_at(cursor) or [None])[-1]
 
     if hovered_card:
@@ -475,7 +522,7 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
                 if hovered_card:
                     hovered_card.set_clicking(False)
                 if hovered_button:
-                    if hovered_button.get_clicking():
+                    if hovered_button.clicking:
                         click_manage(hovered_button,new_winsize)
                         
                         hovered_button.set_clicking(False)
@@ -484,12 +531,9 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                if splash_title1.get_state() in ["showed","appearing"]:
+                if splash_titles_state == "appear":
                     swap_decks()
-                    splash_title1.dismiss()
-                    splash_title2.dismiss()
-                    splash_title3.dismiss()
-                
+                    disappear_splash_titles()
                     value = game.pop_value()
                     if value == "skip":
                         deck1.set_interactable(False)
@@ -535,9 +579,7 @@ def timer_handling(id,infos = None):
 
     if id == "appear_splash_titles":
         update_pseudos()
-        splash_title1.appear()
-        splash_title2.appear()
-        splash_title3.appear()
+        appear_splash_titles()
         fleche4.kill()
 
     elif id == "flip_deck1":
@@ -558,7 +600,7 @@ def timer_handling(id,infos = None):
         yellow_button.liven()
         blue_button.liven()
         green_button.liven()
-        dark_background.liven()
+        dark_background100.liven()
         cancel_wild.liven()
         pioche_button.kill()
         pioche_fleche.kill()
@@ -572,13 +614,13 @@ def timer_handling(id,infos = None):
 def update_pseudos():
 
     if game.clockwise_direction:
-        splash_title2.change_text(deck4.get_infos()[1])
+        splash_title2.set_text(deck4.get_infos()[1])
         pseudo1.set_text(deck4.get_infos()[1])
         pseudo2.set_text(deck1.get_infos()[1])
         pseudo3.set_text(deck2.get_infos()[1])
         pseudo4.set_text(deck3.get_infos()[1])
     else:
-        splash_title2.change_text(deck2.get_infos()[1])
+        splash_title2.set_text(deck2.get_infos()[1])
         pseudo1.set_text(deck2.get_infos()[1])
         pseudo2.set_text(deck3.get_infos()[1])
         pseudo3.set_text(deck4.get_infos()[1])
@@ -642,7 +684,7 @@ def click_manage(button:Button,new_winsize):
         yellow_button.kill()
         blue_button.kill()
         green_button.kill()
-        dark_background.kill()
+        dark_background100.kill()
         cancel_wild.kill()
         pioche_button.liven()
         pioche_fleche.liven()
@@ -667,7 +709,7 @@ def click_manage(button:Button,new_winsize):
         yellow_button.kill()
         blue_button.kill()
         green_button.kill()
-        dark_background.kill()
+        dark_background100.kill()
         cancel_wild.kill()
         pioche_button.liven()
         pioche_fleche.liven()
@@ -717,7 +759,7 @@ def click_manage(button:Button,new_winsize):
             yellow_button.liven()
             blue_button.liven()
             green_button.liven()
-            dark_background.liven()
+            dark_background100.liven()
         else:
             game.card_played(last_played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
             apply_clrval_to_decks(last_played_card.color,last_played_card.value)
@@ -725,7 +767,7 @@ def click_manage(button:Button,new_winsize):
 
     if button is keep_card_button:
 
-        dark_background.kill()
+        dark_background100.kill()
         playable_card_box.kill()
         keep_card_button.kill()
         play_card_button.kill()
@@ -737,6 +779,38 @@ def click_manage(button:Button,new_winsize):
         timers.append(Timer(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS*0.65,"end_of_turn"))
         
             
+def appear_splash_titles():
+
+    global splash_titles_state
+    splash_titles_state = "appear"
+
+    ratio = splash_title1.winsize[0] / assets.BASE_SIZE[0]
+
+    splash_title1.instant_translate([[400*ratio,125*ratio],[400*ratio,175*ratio]],[0.75],['out'])
+    splash_title1.instant_change_alpha([0,255],[0.75],['out'])
+
+    splash_title2.instant_translate([[400*ratio,125*ratio],[400*ratio,225*ratio]],[0.75],['out'])
+    splash_title2.instant_change_alpha([0,255],[0.75],['out'])
+
+    splash_title3.instant_change_alpha([0,255],[0.75],['out'])
+    dark_background205.instant_change_alpha([0,255],[0.75],['out'])
+    
+
+def disappear_splash_titles():
+
+    global splash_titles_state
+    splash_titles_state = "disappear"
+
+    ratio = splash_title1.winsize[0] / assets.BASE_SIZE[0]
+
+    splash_title1.instant_translate([splash_title1.pos,[400*ratio,125*ratio]],[0.5],['out'])
+    splash_title1.instant_change_alpha([255,0],[0.5],['out'])
+
+    splash_title2.instant_translate([splash_title2.pos,[400*ratio,125*ratio]],[0.5],['out'])
+    splash_title2.instant_change_alpha([255,0],[0.5],['out'])
+
+    splash_title3.instant_change_alpha([255,0],[0.5],['out'])
+    dark_background205.instant_change_alpha([255,0],[0.5],['out'])
 
 
 def end_of_turn():
@@ -769,11 +843,12 @@ def rotate_animation():
     
 
 def skip_animation(skip_seconds):
+
     skip_logo.liven()
-    skip_logo.change_alphas([0,0,255,255,0],[0.575,0.75,skip_seconds,0.75],['linear','inout','linear','inout'],1)
+    skip_logo.change_alpha([0,0,255,255,0],[0.575,0.75,skip_seconds,0.75],['linear','inout','linear','inout'],1)
     skip_logo.resize([0.25,0.25,1,1,0.25],[0.575,0.75,skip_seconds,0.75],['linear','inout','linear','inout'],1)
     dark_area.liven()
-    dark_area.change_alphas([0,0,191,191,0],[0.575,0.75,skip_seconds,0.75],['linear','inout','linear','inout'],1)
+    dark_area.change_alpha([0,0,191,191,0],[0.575,0.75,skip_seconds,0.75],['linear','inout','linear','inout'],1)
     dark_area.resize([0.25,0.25,1,1,0.25],[0.575,0.75,skip_seconds,0.75],['linear','inout','linear','inout'],1)
     timers.append(Timer(1.325+skip_seconds,'end_of_turn'))
 

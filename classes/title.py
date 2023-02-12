@@ -13,8 +13,8 @@ class Title(Box):
         font_clrs:list,
         font_size:int,
         parent_groups:list,
+        size:list,
         border:list = [-1,(0,0,0),0,"inset"],
-        size:list = [None,None],
         text:str = "",
         font_family:str = "Arial",
         text_align:list = [0,"center"],
@@ -34,6 +34,18 @@ class Title(Box):
         Pour des informations sur d'autres attributs, se référer à la docu de Box.__init__()
         """
 
+        self.underline = underline
+        self.text_align = text_align
+        self.texte = text
+        self.font_clrs = font_clrs
+        self.font_size = font_size
+        self.font_family = font_family
+
+        for i,clr in enumerate(self.font_clrs):
+            self.font_clrs[i] = list(self.font_clrs[i])
+            if len(clr) != 4:
+                self.font_clrs[i].append(255)
+
         super().__init__(
             winsize = winsize,
             size = size,
@@ -44,45 +56,28 @@ class Title(Box):
             layer = layer,
             parent_groups = parent_groups
         )
-
-        self.underline = underline
-        self.text_align = text_align
-        self.texte = text
-        self.font_clrs = font_clrs
-        self.font_size = font_size
-        self.font_family = font_family
-
-        for i,clr in enumerate(self.font_clrs):
-            if len(clr) != 4:
-                self.font_clrs[i] = list(self.font_clrs[i])
-                self.font_clrs[i].append(255)
-
-        self.calc_title()
         
 
 
-    def calc_title(self,texte = None):
+    def calc_image(self,texte = None):
         """
-        Recalcul de la surface du sprite, ainsi que son rectangle.
+        Recalcul de la surface du sprite
         """
 
         if not texte:
             texte = self.texte
 
         if self.font_family.endswith(".ttf"):
-            font = pygame.font.SysFont(name=os.path.join(os.getcwd(),"fonts",self.font_family),size=round(self.font_size))
+            font = pygame.font.SysFont(os.path.join(os.getcwd(),"fonts",self.font_family),round(self.font_size*self.resize_ratio))
         else:
-            font = pygame.font.SysFont(name=self.font_family,size=round(self.font_size))
+            font = pygame.font.SysFont(self.font_family,round(self.font_size*self.resize_ratio))
 
         font.set_underline(self.underline)
-
         textes = texte.split("\n")
-        
         texte_surfaces = []
         for i in range(len(textes)):
             font_clr = [round(j) for j in self.font_clrs[i]]
             texte_surfaces.append(font.render(textes[i],True,font_clr))
-            
 
         self.text_height = sum([i.get_height() for i in texte_surfaces])
         self.text_width = max([i.get_width() for i in texte_surfaces])
@@ -94,14 +89,11 @@ class Title(Box):
         for i in texte_surfaces:
             text_surface.blit(i,i.get_rect(midtop=(self.text_width//2,count_height)))
             count_height += i.get_height()
-
         if text_surface.get_width() > self.width or text_surface.get_height() > self.height:
-            return "text is too wide"
+            return False
 
-        super().calc_box()
-
+        super().calc_image()
         x,y = self.image.get_rect().center
-
         if self.text_align[1] == "center":
             text_rect = text_surface.get_rect(center=(x,y))
             self.image.blit(text_surface,text_rect)
@@ -110,29 +102,29 @@ class Title(Box):
             x = round(x - self.image.get_width()//2 + self.text_align[0])
             text_rect = text_surface.get_rect(midleft=(x,y))
             self.image.blit(text_surface,text_rect)
-        
 
 
-
-    def update(self,new_winsize,**args):
+    def update(self,new_winsize,dt,**args):
         """Actualisation du sprite ayant lieu à chaque changement image"""
 
         if self.winsize != new_winsize:
             self.rescale(new_winsize)
+
+        self.manage_frames(dt)
             
 
     def rescale(self, new_winsize):
         """actualisation des valeurs en cas de changement de résolution"""
 
         super().rescale(new_winsize)
-        self.font_size = self.font_size*self.ratio
-        self.text_align[0] = self.text_align[0]*self.ratio
+        self.font_size *= self.ratio
+        self.text_align[0] *= self.ratio
 
-        self.calc_title()
-    
+        self.calc_image()
+
 
     def set_text(self,text:str):
 
         self.texte = text
-        self.calc_title()
+        self.calc_image()
 

@@ -59,20 +59,10 @@ class Button(Title):
         )
         self.ease_seconds = ease_seconds
         self.ease_mode = ease_mode
-
         self.clicking = False
         self.state = "base"
-        
-        self.last_state = self.state
-        self.last_frame_state = self.state
-        self.animation_finish = True
 
         self.reset_style(background_clr,border,hov_background_clr,hov_border,active_background_clr,active_border)
-
-        self.background_clr_frames = Transition([self.base_background_clr,self.hov_background_clr],[self.ease_seconds],[self.ease_mode])
-        self.border_clr_frames = Transition([self.base_border_clr,self.hov_border_clr],[self.ease_seconds],[self.ease_mode])
-        self.border_padding_frames = Transition([self.base_border_padding,self.hov_border_padding],[self.ease_seconds],[self.ease_mode])
-        self.border_width_frames = Transition([self.base_border_width,self.hov_border_width],[self.ease_seconds],[self.ease_mode])
         
 
     def reset_style(
@@ -83,6 +73,7 @@ class Button(Title):
         hov_border = None,
         active_background_clr = None,
         active_border = None,
+        instant_change = True,
     ):
         """
         Redéfinition des attributs constants du bouton. N'affecte pas l'état actuel du bouton. Cette méthode est à utiliser pour changer le style que le bouton prend en fonction de ses états : 'base' est l'état que prend le bouton quand il ne reçoit aucune interaction. 'hover' est l'état que prend le bouton au survol. 'active' est l'état que prend le bouton quand il est cliqué (il écrase donc 'hover')
@@ -95,8 +86,7 @@ class Button(Title):
             self.base_border_width = border[0]
             self.base_border_clr = border[1][:]
             self.base_border_padding = border[2]
-        
-
+    
         if hov_background_clr != None:
             self.hov_background_clr = hov_background_clr[:]
         else:
@@ -150,11 +140,19 @@ class Button(Title):
             self.active_border_clr = list(self.active_border_clr)
             self.active_border_clr.append(255)
 
-        self.state = "base"
-        self.last_frame_state = "active"
-        self.last_state = "active"
-        self.animation_finish = False
-
+        if instant_change:
+            self.background_clr = self.base_background_clr[:]
+            self.border_width = self.base_border_width
+            self.border_clr = self.base_border_clr[:]
+            self.border_padding = self.base_border_padding
+            self.calc_image()
+            self.calc_rect()
+        else:
+            self.instant_change_background_clr([self.background_clr,self.base_background_clr],[self.ease_seconds],[self.ease_mode])
+            self.instant_change_border_width([self.border_width,self.base_border_width],[self.ease_seconds],[self.ease_mode])
+            self.instant_change_border_clr([self.border_clr,self.base_border_clr],[self.ease_seconds],[self.ease_mode])
+            self.instant_change_border_padding([self.border_padding,self.base_border_padding],[self.ease_seconds],[self.ease_mode])
+            
     
     def update(self,new_winsize,dt,fps,cursor):
         """Actualisation du sprite ayant lieu à chaque changement image"""
@@ -163,96 +161,75 @@ class Button(Title):
             self.rescale(new_winsize)
 
         self.state_changing(cursor)
-
-        recalc_needed = self.frame_managing(dt)
-
-        if recalc_needed:
-            self.calc_title()
+        self.manage_frames(dt)
 
 
     def rescale(self,new_winsize):
         """actualisation des valeurs en cas de changement de résolution"""
-
+        
         super().rescale(new_winsize)
 
         self.active_border_width = self.active_border_width * self.ratio
         self.active_border_padding = self.active_border_padding * self.ratio
         self.hov_border_padding = self.hov_border_padding * self.ratio
         self.hov_border_width = self.hov_border_width * self.ratio
-        
-        self.border_padding_frames.resize_extremums(self.ratio)
-        self.border_width_frames.resize_extremums(self.ratio)
+        self.base_border_width *= self.ratio
+        self.base_border_padding *= self.ratio
 
 
     def state_changing(self,cursor):
         """
         actualisation de l'état du sprite.
         """
+
         if self.rect.collidepoint(cursor):
-            self.state = "hover"
+            new_state = "hover"
         else:
-            self.state = "base"
-
+            new_state = "base"
         if self.clicking:
-            self.state = "active"
+            new_state = "active"
 
+        if self.state != new_state:
+            
+            self.state = new_state
+            if self.state == "hover":
+                self.cur_background_clr_frames = Transition([self.background_clr,self.hov_background_clr],[self.ease_seconds],[self.ease_mode])
+                self.background_clr_iter_nb = 1
 
-    def frame_managing(self,dt):
-        """
-        Gestion des animations
-        """
+                self.cur_border_width_frames = Transition([self.border_width,self.hov_border_width],[self.ease_seconds],[self.ease_mode])
+                self.border_width_iter_nb = 1
 
-        if self.state == "active":
-            if self.last_frame_state != "active":
-                self.last_frame_state = "active"
-                self.background_clr_frames.set_step_values([self.cur_background_clr,self.active_background_clr])
-                self.border_clr_frames.set_step_values([self.cur_border_clr,self.active_border_clr])
-                self.border_padding_frames.set_step_values([self.cur_border_padding,self.active_border_padding])
-                self.border_width_frames.set_step_values([self.cur_border_width,self.active_border_width])
+                self.cur_border_clr_frames = Transition([self.border_clr,self.hov_border_clr],[self.ease_seconds],[self.ease_mode])
+                self.border_clr_iter_nb = 1
 
-        if self.state == "hover":
-            if self.last_frame_state != "hover":
-                self.last_frame_state = "hover"
-                self.background_clr_frames.set_step_values([self.cur_background_clr,self.hov_background_clr])
-                self.border_clr_frames.set_step_values([self.cur_border_clr,self.hov_border_clr])
-                self.border_padding_frames.set_step_values([self.cur_border_padding,self.hov_border_padding])
-                self.border_width_frames.set_step_values([self.cur_border_width,self.hov_border_width])
-        
-        if self.state == "base":
-            if self.last_frame_state != "base":
-                self.last_frame_state = "base"
-                self.background_clr_frames.set_step_values([self.cur_background_clr,self.base_background_clr])
-                self.border_clr_frames.set_step_values([self.cur_border_clr,self.base_border_clr])
-                self.border_padding_frames.set_step_values([self.cur_border_padding,self.base_border_padding])
-                self.border_width_frames.set_step_values([self.cur_border_width,self.base_border_width])
+                self.cur_border_padding_frames = Transition([self.border_padding,self.hov_border_padding],[self.ease_seconds],[self.ease_mode])
+                self.border_padding_iter_nb = 1
 
+            elif self.state == "base":
+                self.cur_background_clr_frames = Transition([self.background_clr,self.base_background_clr],[self.ease_seconds],[self.ease_mode])
+                self.background_clr_iter_nb = 1
 
-        if self.last_state != self.state or not self.animation_finish:
+                self.cur_border_width_frames = Transition([self.border_width,self.base_border_width],[self.ease_seconds],[self.ease_mode])
+                self.border_width_iter_nb = 1
 
-            recalc_needed = False
-            self.animation_finish = True
+                self.cur_border_clr_frames = Transition([self.border_clr,self.base_border_clr],[self.ease_seconds],[self.ease_mode])
+                self.border_clr_iter_nb = 1
 
-            self.cur_background_clr,rec_need,finish = self.background_clr_frames.change_index(dt,self.cur_background_clr)
-            recalc_needed = recalc_needed or rec_need
-            self.animation_finish = self.animation_finish and finish
+                self.cur_border_padding_frames = Transition([self.border_padding,self.base_border_padding],[self.ease_seconds],[self.ease_mode])
+                self.border_padding_iter_nb = 1
 
-            self.cur_border_clr,rec_need,finish = self.border_clr_frames.change_index(dt,self.cur_border_clr)
-            recalc_needed = recalc_needed or rec_need
-            self.animation_finish = self.animation_finish and finish
+            elif self.state == "active":
+                self.cur_background_clr_frames = Transition([self.background_clr,self.active_background_clr],[self.ease_seconds],[self.ease_mode])
+                self.background_clr_iter_nb = 1
 
-            self.cur_border_padding,rec_need,finish = self.border_padding_frames.change_index(dt,self.cur_border_padding)
-            recalc_needed = recalc_needed or rec_need
-            self.animation_finish = self.animation_finish and finish
+                self.cur_border_width_frames = Transition([self.border_width,self.active_border_width],[self.ease_seconds],[self.ease_mode])
+                self.border_width_iter_nb = 1
 
-            self.cur_border_width,rec_need,finish = self.border_width_frames.change_index(dt,self.cur_border_width)
-            recalc_needed = recalc_needed or rec_need
-            self.animation_finish = self.animation_finish and finish
+                self.cur_border_clr_frames = Transition([self.border_clr,self.active_border_clr],[self.ease_seconds],[self.ease_mode])
+                self.border_clr_iter_nb = 1
 
-            if self.animation_finish:
-                self.last_state = self.state
-        
-            return recalc_needed
-        return False
+                self.cur_border_padding_frames = Transition([self.border_padding,self.active_border_padding],[self.ease_seconds],[self.ease_mode])
+                self.border_padding_iter_nb = 1
         
     
     def set_clicking(self,state:bool):
@@ -260,39 +237,5 @@ class Button(Title):
         méthode d'écriture de l'attribut 'clicking'
         """
 
-        if type(state) != bool:
-            raise TypeError("state must be bool")
         self.clicking = state
-
-
-    def get_clicking(self):
-        """
-        méthode de lecture de l'attribut 'clicking'
-        """
-        return self.clicking
-
-
-    def reset_attributes(self):
-        """
-        Redéfinition des attributs variables du boutons. Cette méthode est à utiliser quand on veut faire table rase de l'état du bouton.
-        """
-        
-        self.cur_background_clr = self.base_background_clr[:]
-        
-        self.cur_border_clr = self.base_border_clr[:]
-        self.cur_border_padding = self.base_border_padding
-        self.cur_border_width = self.base_border_width
-
-        self.clicking = False
-        self.state = "base"
-        self.last_state = "base"
-        self.last_frame_state = "base"
-        self.animation_finish = True
-
-        self.background_clr_frames.set_step_values([self.base_background_clr,self.hov_background_clr])
-        self.border_clr_frames.set_step_values([self.base_border_clr,self.hov_border_clr])
-        self.border_padding_frames.set_step_values([self.base_border_padding,self.hov_border_padding])
-        self.border_width_frames.set_step_values([self.base_border_width,self.hov_border_width])
-
-        self.calc_title()
 

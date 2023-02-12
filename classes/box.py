@@ -1,4 +1,5 @@
-
+import math
+from classes.transition import Transition
 
 import pygame
 
@@ -15,9 +16,10 @@ L'objet Box est le widget le plus bas niveau (il n'hérite de rien d'autre que p
         background_clr:tuple,
         parent_groups:list,
         border:list = [-1,(0,0,0),0,"inset"],
+        alpha:int = 255,
         living:bool = True,
         layer:int = 0
-    ) -> None:
+    ):
         """
         winsize = [width:int,height:int] -> taille de la fenetre pygame
         size = [width:int,height:int] -> taille de la box
@@ -40,28 +42,57 @@ L'objet Box est le widget le plus bas niveau (il n'hérite de rien d'autre que p
 
         self.pos = loc[0]
         self.placement_mode = loc[1]
-
-        self.base_background_clr = list(background_clr[:])
-        self.base_border_width = border[0]
-        self.base_border_clr = list(border[1][:])
-        self.base_border_padding = border[2]
-
-        self.cur_background_clr = list(background_clr[:])
-        self.cur_border_width = border[0]
-        self.cur_border_clr = list(border[1][:])
-        self.cur_border_padding = border[2]
-
         self.border_position = border[3]
 
-        if len(self.base_background_clr) != 4:
-            self.base_background_clr.append(255)
-            self.cur_background_clr.append(255)
+        self.background_clr = list(background_clr)
+        self.cur_background_clr_frames:Transition = None
+        self.inf_background_clr_frames:Transition = None
+        self.background_clr_iter_nb = 0
+        self.background_clr_frames_list:list[tuple[Transition,int]] = []
 
-        if len(self.cur_border_clr) != 4:
-            self.base_border_clr.append(255)
-            self.cur_border_clr.append(255)
+        self.border_width = border[0]
+        self.cur_border_width_frames:Transition = None
+        self.inf_border_width_frames:Transition = None
+        self.border_width_iter_nb = 0
+        self.border_width_frames_list:list[tuple[Transition,int]] = []
 
-        self.calc_box()
+        self.border_clr = list(border[1])
+        self.cur_border_clr_frames:Transition = None
+        self.inf_border_clr_frames:Transition = None
+        self.border_clr_iter_nb = 0
+        self.border_clr_frames_list:list[tuple[Transition,int]] = []
+
+        self.border_padding = border[2]
+        self.cur_border_padding_frames:Transition = None
+        self.inf_border_padding_frames:Transition = None
+        self.border_padding_iter_nb = 0
+        self.border_padding_frames_list:list[tuple[Transition,int]] = []
+
+        self.cur_translate_frames:Transition = None
+        self.translate_iter_nb = 0
+        self.translate_frames_list:list[tuple[Transition,int]] = []
+        self.inf_translate_frames:Transition = None
+
+        self.resize_ratio = 1
+        self.cur_resize_frames:Transition = None
+        self.resize_iter_nb = 0
+        self.resize_frames_list:list[tuple[Transition,int]] = []
+        self.inf_resize_frames:Transition = None
+        
+        self.alpha = alpha
+        self.cur_alpha_frames:Transition = None
+        self.alpha_iter_nb = 0
+        self.alpha_frames_list:list[tuple[Transition,int]] = []
+        self.inf_alpha_frames:Transition = None
+
+        if len(self.background_clr) != 4:
+            self.background_clr.append(255)
+
+        if len(self.border_clr) != 4:
+            self.border_clr.append(255)
+
+        self.calc_image()
+        self.calc_rect()
 
         if living:
             self.liven()
@@ -76,50 +107,65 @@ L'objet Box est le widget le plus bas niveau (il n'hérite de rien d'autre que p
             group.add(self)
 
         
-    def calc_box(self) -> None:
+    def calc_image(self):
         """
-        Recalcul de la surface du sprite, ainsi que son rectangle.
+        Recalcul de la surface du sprite
         """
+        width = round(self.width) + round(self.width) % 2
+        height = round(self.height) + round(self.height) % 2
+        border_padding2 = round(self.border_padding*2) + round(self.border_padding*2) % 2
+        border_width2 = round(self.border_width*2) + round(self.border_width*2) % 2
 
         if self.border_position == "inset":
-
             self.image = pygame.Surface([
-                round(self.width),
-                round(self.height)
+                round(width*self.resize_ratio),
+                round(height*self.resize_ratio)
                 ],pygame.SRCALPHA)
-            self.image.fill(self.cur_background_clr)
+            self.image.fill(self.background_clr)
 
-            border_rect = pygame.Rect(0,0, round(self.width - self.cur_border_padding*2), round(self.height - self.cur_border_padding*2))
+            border_rect = pygame.Rect(
+                0,
+                0, 
+                round((width - border_padding2)*self.resize_ratio), 
+                round((height - border_padding2)*self.resize_ratio))
+
             border_rect.center = self.image.get_rect().center
 
             pygame.draw.rect(
             self.image,
-            self.cur_border_clr,
+            self.border_clr,
             border_rect,
-            round(self.cur_border_width)
+            round(self.border_width*self.resize_ratio)
             )
 
-
         elif self.border_position == "outset":
-
             self.image = pygame.Surface([
-                round(self.width + self.cur_border_width*2 + self.cur_border_padding*2),
-                round(self.height + self.cur_border_width*2 + self.cur_border_padding*2)
-                ],pygame.SRCALPHA)
-            self.image.fill(self.cur_background_clr)
+                round((width + border_width2 + border_padding2)*self.resize_ratio),
+                round((height + border_width2 + border_padding2)*self.resize_ratio)],pygame.SRCALPHA)
+            self.image.fill(self.background_clr)
 
-            border_rect = pygame.Rect(0,0, round(self.width + self.cur_border_width*2) , round(self.height + self.cur_border_width*2) )
+
+
+            border_rect = pygame.Rect(
+                0,
+                0, 
+                round((width + round(self.border_width*2))*self.resize_ratio), 
+                round((height + round(self.border_width*2))*self.resize_ratio))
             border_rect.center = self.image.get_rect().center
-
             pygame.draw.rect(
             self.image,
-            self.cur_border_clr,
+            self.border_clr,
             border_rect,
-            round(self.cur_border_width)
+            round(self.border_width*self.resize_ratio)
             )
 
         else:
             raise ValueError ("border_position must be 'inset' or 'outset'")
+
+        self.image.set_alpha(self.alpha)
+
+
+    def calc_rect(self):
 
         pos = [round(i) for i in self.pos]
         if self.placement_mode == "topleft":
@@ -141,11 +187,14 @@ L'objet Box est le widget le plus bas niveau (il n'hérite de rien d'autre que p
         elif self.placement_mode == "center":
             self.rect = self.image.get_rect(center=pos)
 
-    def update(self,new_winsize,**args) -> None:
+
+    def update(self,new_winsize,dt,**args) -> None:
         """Actualisation du sprite ayant lieu à chaque changement image"""
 
         if self.winsize != new_winsize:
             self.rescale(new_winsize = new_winsize)
+
+        self.manage_frames(dt)
 
 
     def rescale(self,new_winsize) -> None:
@@ -156,11 +205,317 @@ L'objet Box est le widget le plus bas niveau (il n'hérite de rien d'autre que p
 
         self.ratio = self.winsize[0] / old_winsize[0]
 
-        self.width = self.width*self.ratio
-        self.height = self.height*self.ratio
-        self.cur_border_width = self.cur_border_width*self.ratio
-        self.cur_border_padding = self.cur_border_padding*self.ratio
+        self.width *= self.ratio
+        self.height *= self.ratio
+        self.border_width *= self.ratio
+        self.border_padding *= self.ratio
         self.pos = [i*self.ratio for i in self.pos]
+
+        if round(self.width) % 2 != 1:
+            self.width += 1
+
+        if round(self.height) %2 != 1:
+            self.height += 1
+
+        for transition in self.border_width_frames_list + [self.cur_border_width_frames,self.inf_border_width_frames]:
+            if transition is not None:
+                transition.resize_extremums(self.ratio)
+
+        for transition in self.border_padding_frames_list + [self.cur_border_padding_frames,self.inf_border_padding_frames]:
+            if transition is not None:
+                transition.resize_extremums(self.ratio)
+
+        for transition in self.translate_frames_list + [self.cur_translate_frames,self.inf_translate_frames]:
+            if transition is not None:
+                transition.resize_extremums(self.ratio)
         
-        self.calc_box()
+        self.calc_image()
+        self.calc_rect()
+
+
+    def manage_frames(self,dt):
+
+        calc_image1,calc_image2,calc_both1,calc_both2,calc_both3,calc_rect1,calc_rect2 = [False]*7
+
+        if self.background_clr_iter_nb > 0:
+            self.background_clr, calc_image1, finish = self.cur_background_clr_frames.change_index(dt,self.background_clr)
+            if finish:
+                if self.background_clr_iter_nb == math.inf and len(self.background_clr_frames_list) > 0:
+                    self.cur_background_clr_frames, self.background_clr_iter_nb = self.background_clr_frames_list.pop(0)
+                self.background_clr_iter_nb -= 1
+                if self.background_clr_iter_nb > 0:
+                    self.cur_background_clr_frames.reset_index()
+                elif len(self.background_clr_frames_list) > 0:
+                    self.cur_background_clr_frames, self.background_clr_iter_nb = self.background_clr_frames_list.pop(0)
+                elif self.inf_background_clr_frames:
+                        self.cur_background_clr_frames = self.inf_background_clr_frames
+                        self.background_clr_iter_nb = math.inf
+        
+        if self.border_width_iter_nb > 0:
+            self.border_width, calc_both1, finish = self.cur_border_width_frames.change_index(dt,self.border_width)
+            if finish:
+                if self.border_width_iter_nb == math.inf and len(self.border_width_frames_list) > 0:
+                    self.cur_border_width_frames, self.border_width_iter_nb = self.border_width_frames_list.pop(0)
+                self.border_width_iter_nb -= 1
+                if self.border_width_iter_nb > 0:
+                    self.cur_border_width_frames.reset_index()
+                elif len(self.border_width_frames_list) > 0:
+                    self.cur_border_width_frames, self.border_width_iter_nb = self.border_width_frames_list.pop(0)
+                elif self.inf_border_width_frames:
+                        self.cur_border_width_frames = self.inf_border_width_frames
+                        self.border_width_iter_nb = math.inf
+        
+        if self.border_clr_iter_nb > 0:
+            self.border_clr, calc_rect1, finish = self.cur_border_clr_frames.change_index(dt,self.border_clr)
+            if finish:
+                if self.border_clr_iter_nb == math.inf and len(self.border_clr_frames_list) > 0:
+                    self.cur_border_clr_frames, self.border_clr_iter_nb = self.border_clr_frames_list.pop(0)
+                self.border_clr_iter_nb -= 1
+                if self.border_clr_iter_nb > 0:
+                    self.cur_border_clr_frames.reset_index()
+                elif len(self.border_clr_frames_list) > 0:
+                    self.cur_border_clr_frames, self.border_clr_iter_nb = self.border_clr_frames_list.pop(0)
+                elif self.inf_border_clr_frames:
+                        self.cur_border_clr_frames = self.inf_border_clr_frames
+                        self.border_clr_iter_nb = math.inf
+        
+        if self.border_padding_iter_nb > 0:
+            self.border_padding, calc_both2, finish = self.cur_border_padding_frames.change_index(dt,self.border_padding)
+            if finish:
+                if self.border_padding_iter_nb == math.inf and len(self.border_padding_frames_list) > 0:
+                    self.cur_border_padding_frames, self.border_padding_iter_nb = self.border_padding_frames_list.pop(0)
+                self.border_padding_iter_nb -= 1
+                if self.border_padding_iter_nb > 0:
+                    self.cur_border_padding_frames.reset_index()
+                elif len(self.border_padding_frames_list) > 0:
+                    self.cur_border_padding_frames, self.border_padding_iter_nb = self.border_padding_frames_list.pop(0)
+                elif self.inf_border_padding_frames:
+                        self.cur_border_padding_frames = self.inf_border_padding_frames
+                        self.border_padding_iter_nb = math.inf
+
+        if self.translate_iter_nb > 0:
+            self.pos, calc_rect2, finish = self.cur_translate_frames.change_index(dt,self.pos)
+            if finish:
+                if self.translate_iter_nb == math.inf and len(self.translate_frames_list) > 0:
+                    self.cur_translate_frames, self.translate_iter_nb = self.translate_frames_list.pop(0)
+                self.translate_iter_nb -= 1
+                if self.translate_iter_nb > 0:
+                    self.cur_translate_frames.reset_index()
+                elif len(self.translate_frames_list) > 0:
+                    self.cur_translate_frames, self.translate_iter_nb = self.translate_frames_list.pop(0)
+                elif self.inf_translate_frames:
+                        self.cur_translate_frames = self.inf_translate_frames
+                        self.translate_iter_nb = math.inf
+        
+        if self.resize_iter_nb > 0:
+            self.resize_ratio, calc_both3, finish = self.cur_resize_frames.change_index(dt,self.resize_ratio)
+            if finish:
+                if self.resize_iter_nb == math.inf and len(self.resize_frames_list) > 0:
+                    self.cur_resize_frames, self.resize_iter_nb = self.resize_frames_list.pop(0)
+                self.resize_iter_nb -= 1
+                if self.resize_iter_nb > 0:
+                    self.cur_resize_frames.reset_index()
+                elif len(self.resize_frames_list) > 0:
+                    self.cur_resize_frames, self.resize_iter_nb = self.resize_frames_list.pop(0)
+                elif self.inf_resize_frames:
+                        self.cur_resize_frames = self.inf_resize_frames
+                        self.resize_iter_nb = math.inf
+        
+        if self.alpha_iter_nb > 0:
+            self.alpha, calc_image2, finish = self.cur_alpha_frames.change_index(dt,self.alpha)
+            if finish:
+                if self.alpha_iter_nb == math.inf and len(self.alpha_frames_list) > 0:
+                    self.cur_alpha_frames, self.alpha_iter_nb = self.alpha_frames_list.pop(0)
+                self.alpha_iter_nb -= 1
+                if self.alpha_iter_nb > 0:
+                    self.cur_alpha_frames.reset_index()
+                elif len(self.alpha_frames_list) > 0:
+                    self.cur_alpha_frames, self.alpha_iter_nb = self.alpha_frames_list.pop(0)
+                elif self.inf_alpha_frames:
+                        self.cur_alpha_frames = self.inf_alpha_frames
+                        self.alpha_iter_nb = math.inf
+
+        if round(self.alpha) == 0 and self.alpha_iter_nb == 0:
+            self.kill()
+
+        if calc_both1 or calc_both2 or calc_both3:
+            self.calc_image()
+            self.calc_rect()
+
+        else:
+            if calc_image1 or calc_image2:
+                self.calc_image()
+            if calc_rect1 or calc_rect2:
+                self.calc_rect()    
     
+
+    def change_background_clr(self,values:list,ease_seconds:list,ease_modes:list,iter_nb:int = math.inf):
+        
+        if iter_nb == math.inf:
+            self.inf_background_clr_frames = Transition(values,ease_seconds,ease_modes)
+            if self.cur_background_clr_frames is None or self.background_clr_iter_nb == 0:
+                self.cur_background_clr_frames = self.inf_background_clr_frames
+                self.background_clr_iter_nb = math.inf
+        else:
+            if self.cur_background_clr_frames is None or self.background_clr_iter_nb == 0:
+                self.cur_background_clr_frames = Transition(values,ease_seconds,ease_modes)
+                self.background_clr_iter_nb = iter_nb
+            elif self.background_clr_iter_nb == math.inf:
+                self.cur_background_clr_frames = Transition(values,ease_seconds,ease_modes)
+                self.background_clr_iter_nb = iter_nb
+            else:
+                self.background_clr_frames_list.append((Transition(values,ease_seconds,ease_modes),iter_nb))
+
+
+    def instant_change_background_clr(self,values:list,ease_seconds:list,ease_modes:list):
+
+        self.cur_background_clr_frames = Transition(values,ease_seconds,ease_modes)
+        self.background_clr_iter_nb = 1
+
+
+    def change_border_width(self,values:list,ease_seconds:list,ease_modes:list,iter_nb:int = math.inf):
+        
+        if iter_nb == math.inf:
+            self.inf_border_width_frames = Transition(values,ease_seconds,ease_modes)
+            if self.cur_border_width_frames is None or self.border_width_iter_nb == 0:
+                self.cur_border_width_frames = self.inf_border_width_frames
+                self.border_width_iter_nb = math.inf
+        else:
+            if self.cur_border_width_frames is None or self.border_width_iter_nb == 0:
+                self.cur_border_width_frames = Transition(values,ease_seconds,ease_modes)
+                self.border_width_iter_nb = iter_nb
+            elif self.border_width_iter_nb == math.inf:
+                self.cur_border_width_frames = Transition(values,ease_seconds,ease_modes)
+                self.border_width_iter_nb = iter_nb
+            else:
+                self.border_width_frames_list.append((Transition(values,ease_seconds,ease_modes),iter_nb))
+
+
+    def instant_change_border_width(self,values:list,ease_seconds:list,ease_modes:list):
+
+        self.cur_border_width_frames = Transition(values,ease_seconds,ease_modes)
+        self.border_width_iter_nb = 1
+
+
+    def change_border_clr(self,values:list,ease_seconds:list,ease_modes:list,iter_nb:int = math.inf):
+        
+        if iter_nb == math.inf:
+            self.inf_border_clr_frames = Transition(values,ease_seconds,ease_modes)
+            if self.cur_border_clr_frames is None or self.border_clr_iter_nb == 0:
+                self.cur_border_clr_frames = self.inf_border_clr_frames
+                self.border_clr_iter_nb = math.inf
+        else:
+            if self.cur_border_clr_frames is None or self.border_clr_iter_nb == 0:
+                self.cur_border_clr_frames = Transition(values,ease_seconds,ease_modes)
+                self.border_clr_iter_nb = iter_nb
+            elif self.border_clr_iter_nb == math.inf:
+                self.cur_border_clr_frames = Transition(values,ease_seconds,ease_modes)
+                self.border_clr_iter_nb = iter_nb
+            else:
+                self.border_clr_frames_list.append((Transition(values,ease_seconds,ease_modes),iter_nb))
+
+
+    def instant_change_border_clr(self,values:list,ease_seconds:list,ease_modes:list):
+
+        self.cur_border_clr_frames = Transition(values,ease_seconds,ease_modes)
+        self.border_clr_iter_nb = 1
+
+        
+    def change_border_padding(self,values:list,ease_seconds:list,ease_modes:list,iter_nb:int = math.inf):
+        
+        if iter_nb == math.inf:
+            self.inf_border_padding_frames = Transition(values,ease_seconds,ease_modes)
+            if self.cur_border_padding_frames is None or self.border_padding_iter_nb == 0:
+                self.cur_border_padding_frames = self.inf_border_padding_frames
+                self.border_padding_iter_nb = math.inf
+        else:
+            if self.cur_border_padding_frames is None or self.border_padding_iter_nb == 0:
+                self.cur_border_padding_frames = Transition(values,ease_seconds,ease_modes)
+                self.border_padding_iter_nb = iter_nb
+            elif self.border_padding_iter_nb == math.inf:
+                self.cur_border_padding_frames = Transition(values,ease_seconds,ease_modes)
+                self.border_padding_iter_nb = iter_nb
+            else:
+                self.border_padding_frames_list.append((Transition(values,ease_seconds,ease_modes),iter_nb))
+
+    def instant_change_border_padding(self,values:list,ease_seconds:list,ease_modes:list):
+
+        self.cur_border_padding_frames = Transition(values,ease_seconds,ease_modes)
+        self.border_padding_iter_nb = 1
+
+
+    def translate(self,values:list,ease_seconds:list,ease_modes:list,iter_nb:int = math.inf):
+        
+        if iter_nb == math.inf:
+            self.inf_translate_frames = Transition(values,ease_seconds,ease_modes)
+            if self.cur_translate_frames is None or self.translate_iter_nb == 0:
+                self.cur_translate_frames = self.inf_translate_frames
+                self.translate_iter_nb = math.inf
+        else:
+            if self.cur_translate_frames is None or self.translate_iter_nb == 0:
+                self.cur_translate_frames = Transition(values,ease_seconds,ease_modes)
+                self.translate_iter_nb = iter_nb
+            elif self.translate_iter_nb == math.inf:
+                self.cur_translate_frames = Transition(values,ease_seconds,ease_modes)
+                self.translate_iter_nb = iter_nb
+            else:
+                self.translate_frames_list.append((Transition(values,ease_seconds,ease_modes),iter_nb))
+    
+
+    def instant_translate(self,values:list,ease_seconds:list,ease_modes:list):
+
+        self.cur_translate_frames = Transition(values,ease_seconds,ease_modes)
+        self.translate_iter_nb = 1
+
+
+    def resize(self,values:list,ease_seconds:list,ease_modes:list,iter_nb:int = math.inf):
+        
+        if iter_nb == math.inf:
+            self.inf_resize_frames = Transition(values,ease_seconds,ease_modes)
+            if self.cur_resize_frames is None or self.resize_iter_nb == 0:
+                self.cur_resize_frames = self.inf_resize_frames
+                self.resize_iter_nb = math.inf
+        else:
+            if self.cur_resize_frames is None or self.resize_iter_nb == 0:
+                self.cur_resize_frames = Transition(values,ease_seconds,ease_modes)
+                self.resize_iter_nb = iter_nb
+            elif self.resize_iter_nb == math.inf:
+                self.cur_resize_frames = Transition(values,ease_seconds,ease_modes)
+                self.resize_iter_nb = iter_nb
+            else:
+                self.resize_frames_list.append((Transition(values,ease_seconds,ease_modes),iter_nb))
+    
+    
+    def instant_resize(self,values:list,ease_seconds:list,ease_modes:list):
+
+        self.cur_resize_frames = Transition(values,ease_seconds,ease_modes)
+        self.resize_iter_nb = 1
+
+
+    def change_alpha(self,values:list,ease_seconds:list,ease_modes:list,iter_nb:int = math.inf):
+    
+        if not self.alive():
+            self.liven()
+
+        if iter_nb == math.inf:
+            self.inf_alpha_frames = Transition(values,ease_seconds,ease_modes)
+            if self.cur_alpha_frames is None or self.alpha_iter_nb == 0:
+                self.cur_alpha_frames = self.inf_alpha_frames
+                self.alpha_iter_nb = math.inf
+        else:
+            if self.cur_alpha_frames is None or self.alpha_iter_nb == 0:
+                self.cur_alpha_frames = Transition(values,ease_seconds,ease_modes)
+                self.alpha_iter_nb = iter_nb
+            elif self.alpha_iter_nb == math.inf:
+                self.cur_alpha_frames = Transition(values,ease_seconds,ease_modes)
+                self.alpha_iter_nb = iter_nb
+            else:
+                self.alpha_frames_list.append((Transition(values,ease_seconds,ease_modes),iter_nb))
+
+    
+    def instant_change_alpha(self,values:list,ease_seconds:list,ease_modes:list):
+
+        if not self.alive():
+            self.liven()
+        self.cur_alpha_frames = Transition(values,ease_seconds,ease_modes)
+        self.alpha_iter_nb = 1
