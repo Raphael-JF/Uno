@@ -56,11 +56,9 @@ CARDS_SORTING_ANIMATION_SECONDS = 0.4
 CARDS_HOVER_SHIFT_ANIMATION_SECONDS = 0.75 # durée de l'animation de sortie du paquet d'une carte (quand on met le curseur sur elle)
 CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS = 0.35 # durée de l'animation de dépôt d'une carte sur la pile du jeu.
 CARDS_DRAWING_DELAY_SECONDS = 0.35 #délai entre la pioche de plusieurs cartes
+BOT_PLAYING_CARD_ANIMATION_SECONDS = 0.6 #durée de l'animation de placement d'une carte par un bot
 SECONDS_BEFORE_GAME_START = CARDS_DRAWING_DELAY_SECONDS*7 + CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS + CARDS_SORTING_ANIMATION_SECONDS +0.2# temps pour distribuer les cartes avant de commencer à faire jouer les joueurs
 DECK_ELEVATION_ANIMATION_SECONDS = 0.35 #durée de l'animation d'élévation/descente du paquet.
 DECK_ROTATION_ANIMATION_SECONDS = 0.25 #durée de l'animation de rotation du paquet
 PLAYER_NAME_RESIZING_ANIMATION_SECONDS = 0.5 # durée de l'animation de rétrécissement / agrandissement du nom du joueur qui joue.
 DRAW_PILE_ARROW_ANIMATION_SECONDS = 0.5 # durée de l'animation de mouvement de la flèche guidant vers la pioche
-
-
-ALL_CARDS = ["breverse","jreverse","rreverse","vreverse"]

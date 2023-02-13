@@ -353,6 +353,16 @@ class Deck():
         self.played_card = card
 
 
+    def play_random_card(self):
+        
+        if len(self.suggested_cards) == 0:
+            self.draw_cards(1,True)
+        else:
+            card = random.choice(self.suggested_cards)
+            self.cartes.remove(card)
+            self.played_card = card
+
+
     def elevate(self):
 
         self.elevated = True

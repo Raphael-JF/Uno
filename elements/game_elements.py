@@ -489,19 +489,35 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
     if played_card:
         last_played_card = played_card
         
-        if played_card.get_value() in ["wild","4wild"]:
-            game.card_centered(played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
-            timers.append(Timer(assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,"liven_wild_buttons"))
-        elif played_card.value == "reverse":
-            game.card_played(played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
-            apply_clrval_to_decks(game.get_color(),game.get_value())
-            rotate_animation()
-            timers.append(Timer(2.6,'end_of_turn'))
+        if deck1.player_mode == 1:
+            if played_card.value in ["wild","4wild"]:
+                game.card_centered(played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
+                timers.append(Timer(assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,"liven_wild_buttons"))
+            elif played_card.value == "reverse":
+                game.card_played(played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
+                apply_clrval_to_decks(game.color,game.value)
+                rotate_animation()
+                timers.append(Timer(2.6,'end_of_turn'))
+            else:
+                game.card_played(played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
+                apply_clrval_to_decks(game.color,game.value)
+                end_of_turn()
         else:
-            game.card_played(played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
-            apply_clrval_to_decks(game.get_color(),game.get_value())
-            end_of_turn()
-
+            timers.append(Timer(assets.BOT_PLAYING_CARD_ANIMATION_SECONDS + 0.5,"appear_splash_titles"))
+            if played_card.value in ["wild","4wild"]:
+                played_card.set_wild_color(random.choice(['r','v','b','j']))
+                played_card.add_timer(Timer(assets.BOT_PLAYING_CARD_ANIMATION_SECONDS/2,'flip',[assets.CARDS_REVERSE_ANIMATION_SECONDS,['in','out']]))
+                game.card_played(played_card,assets.BOT_PLAYING_CARD_ANIMATION_SECONDS,'out')
+                apply_clrval_to_decks(game.color,game.value)
+            elif played_card.value == "reverse":
+                played_card.add_timer(Timer(assets.BOT_PLAYING_CARD_ANIMATION_SECONDS/2,'flip',[assets.CARDS_REVERSE_ANIMATION_SECONDS,['in','out']]))
+                game.card_played(played_card,assets.BOT_PLAYING_CARD_ANIMATION_SECONDS,'out')
+                apply_clrval_to_decks(game.color,game.value)
+                rotate_animation()
+            else:
+                played_card.add_timer(Timer(assets.BOT_PLAYING_CARD_ANIMATION_SECONDS/2,'flip',[assets.CARDS_REVERSE_ANIMATION_SECONDS,['in','out']]))
+                game.card_played(played_card,assets.BOT_PLAYING_CARD_ANIMATION_SECONDS,'out')
+                apply_clrval_to_decks(game.color,game.value)
         
     for timer in timers:
         res,infos = timer.pass_time(dt)
@@ -549,27 +565,30 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
                 if splash_titles_state == "appear":
                     swap_decks()
                     disappear_splash_titles()
+                    if deck1.player_mode == 1:
+                        timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS,"flip_deck1"))
+
                     if game.value == "skip":
                         game.pop_value()
                         deck1.set_interactable(False)
                         skip_animation(0.75)
-                        timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS,"flip_deck1"))
                     elif game.value == "+2":
                         game.pop_value()
                         deck1.set_interactable(False)
                         skip_animation(assets.CARDS_DRAWING_DELAY_SECONDS + assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS)
-                        timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS,"flip_deck1"))
                         timers.append(Timer(0.625 + assets.DECK_ELEVATION_ANIMATION_SECONDS,'draw_cards',[2,True]))
                     elif game.value == "4wild":
                         game.pop_value()
                         deck1.set_interactable(False)
                         skip_animation(assets.CARDS_DRAWING_DELAY_SECONDS*3 + assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS)
-                        timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS,"flip_deck1"))
                         timers.append(Timer(0.625 + assets.DECK_ELEVATION_ANIMATION_SECONDS,'draw_cards',[4,True]))
+                    elif deck1.player_mode == 0:
+                        fleche4.liven()
+                        deck1.set_interactable(False)
+                        timers.append(Timer(random.uniform(0.75,1.5),"play_random_card"))
                     else:
                         fleche4.liven()
                         deck1.set_interactable(True)
-                        timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS,"flip_deck1"))
                         deck1.elevate()
                         pioche_button.liven()
                         pioche_fleche.liven()
@@ -583,7 +602,7 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
     if game_infos != None:
         first_card.add_timer(Timer(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS/2,'flip',[assets.CARDS_REVERSE_ANIMATION_SECONDS,['in','out']]))
         game.card_played(first_card,assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS,'out') 
-        apply_clrval_to_decks(game.get_color(),game.get_value())
+        apply_clrval_to_decks(game.color,game.value)
 
 
 
@@ -633,6 +652,11 @@ def timer_handling(id,infos = None):
 
     elif id == "draw_cards":
         deck1.draw_cards(*infos)
+    
+    elif id == "play_random_card":
+        deck1.play_random_card()
+        if len(deck1.suggested_cards) == 0:
+            timers.append(Timer(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS + 0.5,"appear_splash_titles"))
 
 def update_pseudos():
 
@@ -696,6 +720,7 @@ def swap_decks():
     deck2.rotate_cards(0,"inout")
     deck3.rotate_cards(0,"inout")
     deck4.rotate_cards(0,"inout")
+    print(deck1.player_mode)
 
 
 def click_manage(button:Button,new_winsize):
@@ -785,7 +810,7 @@ def click_manage(button:Button,new_winsize):
             dark_background100.liven()
         elif last_played_card.value == "reverse":
             game.card_played(last_played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
-            apply_clrval_to_decks(game.get_color(),game.get_value())
+            apply_clrval_to_decks(game.color,game.value)
             rotate_animation()
             timers.append(Timer(2.6,'end_of_turn'))
         else:
