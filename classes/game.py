@@ -33,9 +33,8 @@ class Game(pygame.sprite.Sprite):
 
         if card.value == "reverse":
             self.clockwise_direction = not self.clockwise_direction
-    
-        self.color = card.get_color()
-        self.value = card.get_value()
+        self.color = card.color
+        self.value = card.value
         card.resize(1,ease_seconds,ease_mode)
         dest_midtop_x_extremums = [round(self.pos[0]*29/30),round(self.pos[0]*31/30)]
         dest_midtop_y_extremums = [round(self.pos[1]*29/30),round(self.pos[1]*31/30)]

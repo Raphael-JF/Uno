@@ -407,9 +407,9 @@ keep_card_button = Button(
     living = False
 )
 
-suivant = Title(
+suivant_gauche = Title(
     winsize = assets.BASE_SIZE, 
-    loc = [(570,220),"center"], 
+    loc = [(230,225),"center"], 
     background_clr = (235,235,235),
     size = [60 ,18],
     border=[2,(25,25,25),0,"inset"],
@@ -419,6 +419,21 @@ suivant = Title(
     font_family = "RopaSans-Regular.ttf",
     layer = 2,
     parent_groups = [all_group,to_draw_group]
+)
+
+suivant_droite = Title(
+    winsize = assets.BASE_SIZE, 
+    loc = [(570,225),"center"], 
+    background_clr = (235,235,235),
+    size = [60 ,18],
+    border=[2,(25,25,25),0,"inset"],
+    text = "Suivant",
+    font_clrs = [(25,25,25)],
+    font_size = 18,
+    font_family = "RopaSans-Regular.ttf",
+    layer = 2,
+    parent_groups = [all_group,to_draw_group],
+    living = False
 )
 
 game = Game()
@@ -534,17 +549,19 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
                 if splash_titles_state == "appear":
                     swap_decks()
                     disappear_splash_titles()
-                    value = game.pop_value()
-                    if value == "skip":
+                    if game.value == "skip":
+                        game.pop_value()
                         deck1.set_interactable(False)
                         skip_animation(0.75)
                         timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS,"flip_deck1"))
-                    elif value == "+2":
+                    elif game.value == "+2":
+                        game.pop_value()
                         deck1.set_interactable(False)
                         skip_animation(assets.CARDS_DRAWING_DELAY_SECONDS + assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS)
                         timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS,"flip_deck1"))
                         timers.append(Timer(0.625 + assets.DECK_ELEVATION_ANIMATION_SECONDS,'draw_cards',[2,True]))
-                    elif value == "4wild":
+                    elif game.value == "4wild":
+                        game.pop_value()
                         deck1.set_interactable(False)
                         skip_animation(assets.CARDS_DRAWING_DELAY_SECONDS*3 + assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS)
                         timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS,"flip_deck1"))
@@ -606,6 +623,12 @@ def timer_handling(id,infos = None):
         pioche_fleche.kill()
 
     elif id == "switch_fleche4":
+        if game.clockwise_direction:
+            suivant_droite.kill()
+            suivant_gauche.liven()
+        else:
+            suivant_gauche.kill()
+            suivant_droite.liven()
         fleche4.switch_image()
 
     elif id == "draw_cards":
@@ -760,6 +783,11 @@ def click_manage(button:Button,new_winsize):
             blue_button.liven()
             green_button.liven()
             dark_background100.liven()
+        elif last_played_card.value == "reverse":
+            game.card_played(last_played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
+            apply_clrval_to_decks(game.get_color(),game.get_value())
+            rotate_animation()
+            timers.append(Timer(2.6,'end_of_turn'))
         else:
             game.card_played(last_played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
             apply_clrval_to_decks(last_played_card.color,last_played_card.value)
@@ -825,7 +853,7 @@ def end_of_turn():
 
 
 def rotate_animation():
-
+        
     fleche4.translate([fleche4.pos,fleche4.pos,game.pos,game.pos,fleche4.pos],[0.5,0.3,1+0.5,0.3],['linear','in','linear','out'],1)
     fleche4.resize([1,1,2.5,2.5,1],[0.5,0.3,1+0.5,0.3],['linear','in','linear','out'],1)
     timers.append(Timer(0.5+0.3+0.5,'switch_fleche4'))
