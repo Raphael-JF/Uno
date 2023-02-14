@@ -503,21 +503,23 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
                 apply_clrval_to_decks(game.color,game.value)
                 end_of_turn()
         else:
-            timers.append(Timer(assets.BOT_PLAYING_CARD_ANIMATION_SECONDS + 0.5,"appear_splash_titles"))
             if played_card.value in ["wild","4wild"]:
                 played_card.set_wild_color(random.choice(['r','v','b','j']))
                 played_card.add_timer(Timer(assets.BOT_PLAYING_CARD_ANIMATION_SECONDS/2,'flip',[assets.CARDS_REVERSE_ANIMATION_SECONDS,['in','out']]))
                 game.card_played(played_card,assets.BOT_PLAYING_CARD_ANIMATION_SECONDS,'out')
                 apply_clrval_to_decks(game.color,game.value)
+                timers.append(Timer(assets.BOT_PLAYING_CARD_ANIMATION_SECONDS + 0.5,"appear_splash_titles"))
             elif played_card.value == "reverse":
                 played_card.add_timer(Timer(assets.BOT_PLAYING_CARD_ANIMATION_SECONDS/2,'flip',[assets.CARDS_REVERSE_ANIMATION_SECONDS,['in','out']]))
                 game.card_played(played_card,assets.BOT_PLAYING_CARD_ANIMATION_SECONDS,'out')
                 apply_clrval_to_decks(game.color,game.value)
                 rotate_animation()
+                timers.append(Timer(2.6 + 0.5,"appear_splash_titles"))
             else:
                 played_card.add_timer(Timer(assets.BOT_PLAYING_CARD_ANIMATION_SECONDS/2,'flip',[assets.CARDS_REVERSE_ANIMATION_SECONDS,['in','out']]))
                 game.card_played(played_card,assets.BOT_PLAYING_CARD_ANIMATION_SECONDS,'out')
                 apply_clrval_to_decks(game.color,game.value)
+                timers.append(Timer(assets.BOT_PLAYING_CARD_ANIMATION_SECONDS + 0.5,"appear_splash_titles"))
         
     for timer in timers:
         res,infos = timer.pass_time(dt)
@@ -567,37 +569,51 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
                     disappear_splash_titles()
                     if deck1.player_mode == 1:
                         timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS,"flip_deck1"))
-
-                    if game.value == "skip":
-                        game.pop_value()
-                        deck1.set_interactable(False)
-                        skip_animation(0.75)
-                    elif game.value == "+2":
-                        game.pop_value()
-                        deck1.set_interactable(False)
-                        skip_animation(assets.CARDS_DRAWING_DELAY_SECONDS + assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS)
-                        timers.append(Timer(0.625 + assets.DECK_ELEVATION_ANIMATION_SECONDS,'draw_cards',[2,True]))
-                    elif game.value == "4wild":
-                        game.pop_value()
-                        deck1.set_interactable(False)
-                        skip_animation(assets.CARDS_DRAWING_DELAY_SECONDS*3 + assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS)
-                        timers.append(Timer(0.625 + assets.DECK_ELEVATION_ANIMATION_SECONDS,'draw_cards',[4,True]))
-                    elif deck1.player_mode == 0:
-                        fleche4.liven()
-                        deck1.set_interactable(False)
-                        timers.append(Timer(random.uniform(0.75,1.5),"play_random_card"))
+                    if deck1.player_mode == 1:
+                        if game.value == "skip":
+                            game.pop_value()
+                            deck1.set_interactable(False)
+                            skip_animation(0.75)
+                            timers.append(Timer(1.75 + 0.75,'end_of_turn'))
+                        elif game.value == "+2":
+                            game.pop_value()
+                            deck1.set_interactable(False)
+                            skip_animation(assets.CARDS_DRAWING_DELAY_SECONDS + assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS)
+                            timers.append(Timer(1.75 + assets.CARDS_DRAWING_DELAY_SECONDS + assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS,'end_of_turn'))
+                            timers.append(Timer(0.625 + assets.DECK_ELEVATION_ANIMATION_SECONDS,'draw_cards',[2,True]))
+                        elif game.value == "4wild":
+                            game.pop_value()
+                            deck1.set_interactable(False)
+                            skip_animation(assets.CARDS_DRAWING_DELAY_SECONDS*3 + assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS)
+                            timers.append(Timer(1.75 + assets.CARDS_DRAWING_DELAY_SECONDS*3 + assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS,'end_of_turn'))
+                            timers.append(Timer(0.625 + assets.DECK_ELEVATION_ANIMATION_SECONDS,'draw_cards',[4,True]))
+                        else:
+                            fleche4.liven()
+                            deck1.set_interactable(True)
+                            deck1.elevate()
+                            pioche_button.liven()
+                            pioche_fleche.liven()
                     else:
-                        fleche4.liven()
-                        deck1.set_interactable(True)
-                        deck1.elevate()
-                        pioche_button.liven()
-                        pioche_fleche.liven()
+                        if game.value == "skip":
+                            game.pop_value()
+                            skip_animation(0.75)
+                            timers.append(Timer(1.75 + 0.75,'appear_splash_titles'))
+                        elif game.value == "+2":
+                            game.pop_value()
+                            skip_animation(assets.CARDS_DRAWING_DELAY_SECONDS + assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS)
+                            timers.append(Timer(1.75 + assets.CARDS_DRAWING_DELAY_SECONDS + assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS,'appear_splash_titles'))
+                            timers.append(Timer(0.625 + assets.DECK_ELEVATION_ANIMATION_SECONDS,'draw_cards',[2,True]))
+                        elif game.value == "4wild":
+                            game.pop_value()
+                            skip_animation(assets.CARDS_DRAWING_DELAY_SECONDS*3 + assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS)
+                            timers.append(Timer(1.75 + assets.CARDS_DRAWING_DELAY_SECONDS*3 + assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS,'appear_splash_titles'))
+                            timers.append(Timer(0.625 + assets.DECK_ELEVATION_ANIMATION_SECONDS,'draw_cards',[4,True]))
+                        else:
+                            fleche4.liven()
+                            timers.append(Timer(random.uniform(0.75,1.5),"play_random_card"))
 
             elif event.key == pygame.K_ESCAPE:
                 return 0
-            
-            elif event.key == pygame.K_b:
-                skip_animation(0.75)
                 
     if game_infos != None:
         first_card.add_timer(Timer(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS/2,'flip',[assets.CARDS_REVERSE_ANIMATION_SECONDS,['in','out']]))
@@ -654,6 +670,7 @@ def timer_handling(id,infos = None):
         deck1.draw_cards(*infos)
     
     elif id == "play_random_card":
+        print("signal")
         deck1.play_random_card()
         if len(deck1.suggested_cards) == 0:
             timers.append(Timer(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS + 0.5,"appear_splash_titles"))
@@ -897,12 +914,13 @@ def rotate_animation():
 
 def skip_animation(skip_seconds):
 
+    duree = [0.25,0.75,skip_seconds,0.75]
     skip_logo.liven()
-    skip_logo.change_alpha([0,0,255,255,0],[0.575,0.75,skip_seconds,0.75],['linear','inout','linear','inout'],1)
-    skip_logo.resize([0.25,0.25,1,1,0.25],[0.575,0.75,skip_seconds,0.75],['linear','inout','linear','inout'],1)
+    skip_logo.change_alpha([0,0,255,255,0],duree,['linear','inout','linear','inout'],1)
+    skip_logo.resize([0.25,0.25,1,1,0.25],duree,['linear','inout','linear','inout'],1)
     dark_area.liven()
-    dark_area.change_alpha([0,0,191,191,0],[0.575,0.75,skip_seconds,0.75],['linear','inout','linear','inout'],1)
-    dark_area.resize([0.25,0.25,1,1,0.25],[0.575,0.75,skip_seconds,0.75],['linear','inout','linear','inout'],1)
-    timers.append(Timer(1.325+skip_seconds,'end_of_turn'))
+    dark_area.change_alpha([0,0,191,191,0],duree,['linear','inout','linear','inout'],1)
+    dark_area.resize([0.25,0.25,1,1,0.25],duree,['linear','inout','linear','inout'],1)
+    
 
     
