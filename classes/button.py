@@ -60,6 +60,7 @@ class Button(Title):
         self.ease_seconds = ease_seconds
         self.ease_mode = ease_mode
         self.clicking = False
+        self.hoverable = True
         self.state = "base"
 
         self.reset_style(background_clr,border,hov_background_clr,hov_border,active_background_clr,active_border)
@@ -182,7 +183,7 @@ class Button(Title):
         actualisation de l'état du sprite.
         """
 
-        if self.rect.collidepoint(cursor):
+        if self.rect.collidepoint(cursor) and self.hoverable:
             new_state = "hover"
         else:
             new_state = "base"
@@ -236,6 +237,11 @@ class Button(Title):
         """
         méthode d'écriture de l'attribut 'clicking'
         """
+        if self.hoverable:
+            self.clicking = state
 
-        self.clicking = state
+    
+    def set_hoverable(self,state:bool):
+
+        self.hoverable = state
 

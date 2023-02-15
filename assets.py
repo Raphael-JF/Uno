@@ -62,5 +62,3 @@ DECK_ELEVATION_ANIMATION_SECONDS = 0.35 #durée de l'animation d'élévation/des
 DECK_ROTATION_ANIMATION_SECONDS = 0.25 #durée de l'animation de rotation du paquet
 PLAYER_NAME_RESIZING_ANIMATION_SECONDS = 0.5 # durée de l'animation de rétrécissement / agrandissement du nom du joueur qui joue.
 DRAW_PILE_ARROW_ANIMATION_SECONDS = 0.5 # durée de l'animation de mouvement de la flèche guidant vers la pioche
-
-ALL_CARDS = ["rreverse","breverse","vreverse","jreverse"]

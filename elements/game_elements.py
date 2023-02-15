@@ -22,6 +22,9 @@ buttons_group = pygame.sprite.LayeredUpdates()
 to_draw_group = pygame.sprite.LayeredUpdates()
 cards_group = pygame.sprite.LayeredUpdates()
 
+pause_all_group = pygame.sprite.Group()
+pause_buttons_group = pygame.sprite.LayeredUpdates()
+
 
 background = Box(
     winsize = assets.BASE_SIZE,
@@ -32,6 +35,39 @@ background = Box(
     layer=1,
     parent_groups = [all_group,to_draw_group]
 )
+
+pause_background = Box(
+    winsize = assets.BASE_SIZE,
+    size = [800,450],
+    loc = [[0,0],"topleft"],
+    background_clr=(0, 0, 0, 175),
+    border = [-1,(0,0,0),0,"inset"],
+    layer=6000,
+    parent_groups = [all_group,to_draw_group,pause_all_group],
+    living = False
+)
+
+pause_button = Button(
+    winsize=assets.BASE_SIZE,
+    loc = [(795,5),"topright"],
+    background_clr = (250,250,250),
+    size = [75,34],
+    border=[2,(25,25,25),2,"inset"],
+    text = "Pause",
+    font_clrs=[(25,25,25)],
+    font_size=30,
+    font_family="RopaSans-Regular.ttf",
+    ease_seconds=0.25,
+    ease_mode="inout",
+    hov_background_clr=(230,230,230),
+    hov_border=[2,(25,25,25),0],
+    active_background_clr=(210,210,210),
+    active_border=[3,(25,25,25),0],
+    layer = 6,
+    parent_groups = [all_group,to_draw_group,buttons_group],
+    living = True
+)
+
 
 pioche = Image(
     name=["cartes","hidden.png"],
@@ -125,21 +161,6 @@ skip_logo = Dynamic_image(
 )
 
 
-splash_title1 = Splash_title(
-    winsize = assets.BASE_SIZE,
-    text_center = [400,175],
-    background_clr = (0,0,0,205),
-    font_clrs = [(250,250,250),(250,250,250)],
-    font_size = 64,
-    start_y = 125,
-    appearing_ease = [0.75,'out'],
-    living = False,
-    text = "Au tour de",
-    font_family = "RopaSans-Regular.ttf",
-    layer = 5000,
-    dismiss_ease = [0.5,'out'],
-    parent_groups = [all_group,to_draw_group]
-)
 splash_title1 = Title(
     winsize = assets.BASE_SIZE,
     loc = [[400,175],"center"],
@@ -154,21 +175,6 @@ splash_title1 = Title(
     parent_groups = [all_group,to_draw_group]
 )
 
-splash_title2 = Splash_title(
-    winsize = assets.BASE_SIZE,
-    text_center = [400,225],
-    background_clr = (0,0,0,0),
-    font_clrs = [(250,250,250),(250,250,250)],
-    font_size = 64,
-    start_y = 125,
-    appearing_ease = [0.75,'out'],
-    living = False,
-    text = "Joueur 1",
-    font_family = "RopaSans-Regular.ttf",
-    layer = 5000,
-    dismiss_ease = [0.5,'out'],
-    parent_groups = [all_group,to_draw_group]
-)
 splash_title2 = Title(
     winsize = assets.BASE_SIZE,
     loc = [[400,225],"center"],
@@ -183,21 +189,6 @@ splash_title2 = Title(
     parent_groups = [all_group,to_draw_group]
 )
 
-splash_title3 = Splash_title(
-    winsize = assets.BASE_SIZE,
-    text_center = [400,400],
-    background_clr = (0,0,0,0),
-    font_clrs = [(250,250,250)],
-    font_size = 30,
-    start_y = 400,
-    appearing_ease = [0.75,'out'],
-    living = False,
-    text = "Appuyez sur [Espace] pour jouer",
-    font_family = "RopaSans-Regular.ttf",
-    layer = 5000,
-    dismiss_ease = [0.5,'out'],
-    parent_groups = [all_group,to_draw_group]
-)
 splash_title3 = Title(
     winsize = assets.BASE_SIZE,
     loc = [[400,400],"center"],
@@ -407,6 +398,27 @@ keep_card_button = Button(
     living = False
 )
 
+keep_wild_card_button = Button(
+    winsize=assets.BASE_SIZE,
+    loc = [(400,400),"center"],
+    background_clr = (250,250,250),
+    size = [235,40],
+    border=[2,(25,25,25),2,"inset"],
+    text = "Garder",
+    font_clrs=[(25,25,25)],
+    font_size=30,
+    font_family="RopaSans-Regular.ttf",
+    ease_seconds=0.25,
+    ease_mode="inout",
+    hov_background_clr=(230,230,230),
+    hov_border=[2,(25,25,25),0],
+    active_background_clr=(210,210,210),
+    active_border=[3,(25,25,25),0],
+    layer = 5001,
+    parent_groups = [all_group,to_draw_group,buttons_group],
+    living = False
+)
+
 suivant_gauche = Title(
     winsize = assets.BASE_SIZE, 
     loc = [(230,225),"center"], 
@@ -436,6 +448,119 @@ suivant_droite = Title(
     living = False
 )
 
+reprendre_button = Button(
+    winsize = assets.BASE_SIZE, 
+    loc = [(400,157.5),"center"], 
+    background_clr = (250,250,250),
+    size = [275,40],
+    border=[2,(25,25,25),2,"inset"],
+    text = "Retour au jeu",
+    font_clrs=[(25,25,25)],
+    font_size=30,
+    font_family="RopaSans-Regular.ttf",
+    ease_seconds=0.25,
+    ease_mode="inout",
+    hov_background_clr=(230,230,230),
+    hov_border=[2,(25,25,25),0],
+    active_background_clr=(210,210,210),
+    active_border=[3,(25,25,25),0],
+    layer = 6001,
+    parent_groups = [pause_all_group, to_draw_group, pause_buttons_group],
+    living = False
+)
+
+sauvegarder_button = Button(
+    winsize = assets.BASE_SIZE, 
+    loc = [(400,202.5),"center"], 
+    background_clr = (250,250,250),
+    size = [275,40],
+    border=[2,(25,25,25),2,"inset"],
+    text = "Sauvegarder la partie",
+    font_clrs=[(25,25,25)],
+    font_size=30,
+    font_family="RopaSans-Regular.ttf",
+    ease_seconds=0.25,
+    ease_mode="inout",
+    hov_background_clr=(230,230,230),
+    hov_border=[2,(25,25,25),0],
+    active_background_clr=(210,210,210),
+    active_border=[3,(25,25,25),0],
+    layer = 6001,
+    parent_groups = [pause_all_group, to_draw_group, pause_buttons_group],
+    living = False
+)
+
+parametres_button = Button(
+    winsize = assets.BASE_SIZE, 
+    loc = [(400,247.5),"center"], 
+    background_clr = (250,250,250),
+    size = [275,40],
+    border=[2,(25,25,25),2,"inset"],
+    text = "Paramètres",
+    font_clrs=[(25,25,25)],
+    font_size=30,
+    font_family="RopaSans-Regular.ttf",
+    ease_seconds=0.25,
+    ease_mode="inout",
+    hov_background_clr=(230,230,230),
+    hov_border=[2,(25,25,25),0],
+    active_background_clr=(210,210,210),
+    active_border=[3,(25,25,25),0],
+    layer = 6001,
+    parent_groups = [pause_all_group, to_draw_group, pause_buttons_group],
+    living = False
+)
+
+quitter_button = Button(
+    winsize = assets.BASE_SIZE, 
+    loc = [(400,292.5),"center"], 
+    background_clr = (250,250,250),
+    size = [275,40],
+    border=[2,(25,25,25),2,"inset"],
+    text = "Quitter la partie",
+    font_clrs=[(25,25,25)],
+    font_size=30,
+    font_family="RopaSans-Regular.ttf",
+    ease_seconds=0.25,
+    ease_mode="inout",
+    hov_background_clr=(230,230,230),
+    hov_border=[2,(25,25,25),0],
+    active_background_clr=(210,210,210),
+    active_border=[3,(25,25,25),0],
+    layer = 6001,
+    parent_groups = [pause_all_group, to_draw_group, pause_buttons_group],
+    living = False
+)
+
+texte_gagant = Title(
+    winsize = assets.BASE_SIZE,
+    loc = [[400,175],"center"],
+    background_clr = [0,0,0,0],
+    font_clrs = [[250,250,250]],
+    font_size = 64,
+    size = [400,150],
+    text = "Victoire de",
+    font_family = "RopaSans-Regular.ttf",
+    layer = 6001,
+    living = False,
+    parent_groups = [all_group,to_draw_group]
+)
+
+pseudo_gagnant = Title(
+    winsize = assets.BASE_SIZE,
+    loc = [[400,225],"center"],
+    background_clr = [0,0,0,0],
+    font_clrs = [[250,250,250]],
+    font_size = 64,
+    size = [400,150],
+    text = "",
+    font_family = "RopaSans-Regular.ttf",
+    layer = 6001,
+    living = False,
+    parent_groups = [all_group,to_draw_group]
+)
+
+
 game = Game()
 all_group.add(game)
 to_draw_group.add(game)
@@ -455,7 +580,7 @@ all_group.add(first_card)
 to_draw_group.add(first_card)
 
 
-
+paused_game = False
 a_qui_le_tour = 0
 timers = []
 last_played_card = None
@@ -464,81 +589,90 @@ splash_titles_state = ""
 
 def loop(screen,new_winsize, dt,fps,game_infos = None):
 
-    global timers,last_played_card
+    global timers,last_played_card,paused_game
 
     if game_infos != None:
         timers.append(Timer(assets.SECONDS_BEFORE_GAME_START,'appear_splash_titles'))
         temp_decks = random.sample(decks,4)
         for i,(name,mode) in enumerate(game_infos.items()):
             temp_decks[i].set_infos(mode,name)
-            temp_decks[i].draw_cards(7,False)
+            temp_decks[i].draw_cards(2,False)
         update_pseudos()
 
     cursor = pygame.mouse.get_pos()
-    hovered_button:Button = (buttons_group.get_sprites_at(cursor) or [None])[-1]
     hovered_card:Card = (cards_group.get_sprites_at(cursor) or [None])[-1]
 
     if hovered_card:
         if hovered_card.get_face() == "hidden" or splash_title1.alive() or not deck1.interactable:
             hovered_card = None
 
-    for deck in decks:
-        deck.update(new_winsize,dt,fps,cursor,hovered_card)
-    played_card = deck1.get_played_card()
-    
-    if played_card:
-        last_played_card = played_card
-        
-        if deck1.player_mode == 1:
-            if played_card.value in ["wild","4wild"]:
-                game.card_centered(played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
-                timers.append(Timer(assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,"liven_wild_buttons"))
-            elif played_card.value == "reverse":
-                game.card_played(played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
-                apply_clrval_to_decks(game.color,game.value)
-                rotate_animation()
-                timers.append(Timer(2.6,'end_of_turn'))
-            else:
-                game.card_played(played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
-                apply_clrval_to_decks(game.color,game.value)
-                end_of_turn()
-        else:
-            if played_card.value in ["wild","4wild"]:
-                played_card.set_wild_color(random.choice(['r','v','b','j']))
-                played_card.add_timer(Timer(assets.BOT_PLAYING_CARD_ANIMATION_SECONDS/2,'flip',[assets.CARDS_REVERSE_ANIMATION_SECONDS,['in','out']]))
-                game.card_played(played_card,assets.BOT_PLAYING_CARD_ANIMATION_SECONDS,'out')
-                apply_clrval_to_decks(game.color,game.value)
-                timers.append(Timer(assets.BOT_PLAYING_CARD_ANIMATION_SECONDS + 0.5,"appear_splash_titles"))
-            elif played_card.value == "reverse":
-                played_card.add_timer(Timer(assets.BOT_PLAYING_CARD_ANIMATION_SECONDS/2,'flip',[assets.CARDS_REVERSE_ANIMATION_SECONDS,['in','out']]))
-                game.card_played(played_card,assets.BOT_PLAYING_CARD_ANIMATION_SECONDS,'out')
-                apply_clrval_to_decks(game.color,game.value)
-                rotate_animation()
-                timers.append(Timer(2.6 + 0.5,"appear_splash_titles"))
-            else:
-                played_card.add_timer(Timer(assets.BOT_PLAYING_CARD_ANIMATION_SECONDS/2,'flip',[assets.CARDS_REVERSE_ANIMATION_SECONDS,['in','out']]))
-                game.card_played(played_card,assets.BOT_PLAYING_CARD_ANIMATION_SECONDS,'out')
-                apply_clrval_to_decks(game.color,game.value)
-                timers.append(Timer(assets.BOT_PLAYING_CARD_ANIMATION_SECONDS + 0.5,"appear_splash_titles"))
-        
-    for timer in timers:
-        res,infos = timer.pass_time(dt)
-        if res:
-            timers.remove(timer)
-            timer_handling(res,infos)
-
-    all_group.update(
-        new_winsize = new_winsize, 
-        dt = dt, 
-        fps = fps,
-        cursor = cursor
-    )
+    if paused_game:
+        pause_all_group.update(new_winsize,dt,fps,cursor)
+        hovered_button:Button = (pause_buttons_group.get_sprites_at(cursor) or [None])[-1]
+    else:
+        hovered_button:Button = (buttons_group.get_sprites_at(cursor) or [None])[-1]
+        for deck in decks:
+            deck.update(new_winsize,dt,fps,cursor,hovered_card)
+        for timer in timers:
+            res,infos = timer.pass_time(dt)
+            if res:
+                timers.remove(timer)
+                timer_handling(res,infos)
+        all_group.update(new_winsize,dt,fps,cursor)
 
     to_draw_group.draw(screen)
     pygame.display.flip()
 
-    for event in pygame.event.get():
+    played_card = deck1.get_played_card()
+    
 
+    if played_card:
+        if len(deck1.cartes) == 0:
+            pseudo_gagnant.set_text(deck1.player_name)
+            played_card.add_timer(Timer(assets.BOT_PLAYING_CARD_ANIMATION_SECONDS/2,'flip',[assets.CARDS_REVERSE_ANIMATION_SECONDS,['in','out']]))
+            if deck1.player_mode == 1:
+                played_card.add_timer(Timer(assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS/2,'flip',[assets.CARDS_REVERSE_ANIMATION_SECONDS,['in','out']]))
+                timers.append(Timer(assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS + 0.5,'game_end'))
+                game.card_played(played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
+            else:
+                played_card.add_timer(Timer(assets.BOT_PLAYING_CARD_ANIMATION_SECONDS/2,'flip',[assets.CARDS_REVERSE_ANIMATION_SECONDS,['in','out']]))
+                timers.append(Timer(assets.BOT_PLAYING_CARD_ANIMATION_SECONDS + 0.5,'game_end'))
+                game.card_played(played_card,assets.BOT_PLAYING_CARD_ANIMATION_SECONDS,'out')
+        else:
+            last_played_card = played_card
+            if deck1.player_mode == 1:
+                if played_card.value in ["wild","4wild"]:
+                    game.card_centered(played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
+                    timers.append(Timer(assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,"liven_wild_buttons"))
+                elif played_card.value == "reverse":
+                    game.card_played(played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
+                    apply_clrval_to_decks(game.color,game.value)
+                    rotate_animation()
+                    timers.append(Timer(2.6,'end_of_turn'))
+                else:
+                    game.card_played(played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
+                    apply_clrval_to_decks(game.color,game.value)
+                    end_of_turn()
+            else:
+                if played_card.value in ["wild","4wild"]:
+                    played_card.set_wild_color(random.choice(['r','v','b','j']))
+                    played_card.add_timer(Timer(assets.BOT_PLAYING_CARD_ANIMATION_SECONDS/2,'flip',[assets.CARDS_REVERSE_ANIMATION_SECONDS,['in','out']]))
+                    game.card_played(played_card,assets.BOT_PLAYING_CARD_ANIMATION_SECONDS,'out')
+                    apply_clrval_to_decks(game.color,game.value)
+                    timers.append(Timer(assets.BOT_PLAYING_CARD_ANIMATION_SECONDS + 0.5,"appear_splash_titles"))
+                elif played_card.value == "reverse":
+                    played_card.add_timer(Timer(assets.BOT_PLAYING_CARD_ANIMATION_SECONDS/2,'flip',[assets.CARDS_REVERSE_ANIMATION_SECONDS,['in','out']]))
+                    game.card_played(played_card,assets.BOT_PLAYING_CARD_ANIMATION_SECONDS,'out')
+                    apply_clrval_to_decks(game.color,game.value)
+                    rotate_animation()
+                    timers.append(Timer(2.6 + 0.5,"appear_splash_titles"))
+                else:
+                    played_card.add_timer(Timer(assets.BOT_PLAYING_CARD_ANIMATION_SECONDS/2,'flip',[assets.CARDS_REVERSE_ANIMATION_SECONDS,['in','out']]))
+                    game.card_played(played_card,assets.BOT_PLAYING_CARD_ANIMATION_SECONDS,'out')
+                    apply_clrval_to_decks(game.color,game.value)
+                    timers.append(Timer(assets.BOT_PLAYING_CARD_ANIMATION_SECONDS + 0.5,"appear_splash_titles"))
+
+    for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
@@ -556,16 +690,16 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
                     hovered_card.set_clicking(False)
                 if hovered_button:
                     if hovered_button.clicking:
-                        click_manage(hovered_button,new_winsize)
-                        
+                        res = click_manage(hovered_button,new_winsize)
+                        if res is not None:
+                            return res
                         hovered_button.set_clicking(False)
-                for button in buttons_group.sprites():
+                for button in buttons_group.sprites() + pause_buttons_group.sprites():
                     button.set_clicking(False)
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                if splash_titles_state == "appear":
-                    swap_decks()
+                if splash_titles_state == "appear" and paused_game == False:
                     disappear_splash_titles()
                     if deck1.player_mode == 1:
                         timers.append(Timer(assets.DECK_ELEVATION_ANIMATION_SECONDS,"flip_deck1"))
@@ -612,8 +746,9 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
                             fleche4.liven()
                             timers.append(Timer(random.uniform(0.75,1.5),"play_random_card"))
 
-            elif event.key == pygame.K_ESCAPE:
-                return 0
+            elif event.key == pygame.K_ESCAPE and not pseudo_gagnant.alive():
+                paused_game = not paused_game
+                pause_trigger(paused_game)
                 
     if game_infos != None:
         first_card.add_timer(Timer(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS/2,'flip',[assets.CARDS_REVERSE_ANIMATION_SECONDS,['in','out']]))
@@ -630,6 +765,7 @@ def apply_clrval_to_decks(color,value):
 def timer_handling(id,infos = None):
 
     if id == "appear_splash_titles":
+        swap_decks()
         update_pseudos()
         appear_splash_titles()
         fleche4.kill()
@@ -670,10 +806,18 @@ def timer_handling(id,infos = None):
         deck1.draw_cards(*infos)
     
     elif id == "play_random_card":
-        print("signal")
         deck1.play_random_card()
         if len(deck1.suggested_cards) == 0:
             timers.append(Timer(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS + 0.5,"appear_splash_titles"))
+
+    elif id == "game_end":
+        global paused_game
+        paused_game = True
+        quitter_button.liven()
+        pseudo_gagnant.liven()
+        pause_background.liven()
+        texte_gagant.liven()
+
 
 def update_pseudos():
 
@@ -737,12 +881,11 @@ def swap_decks():
     deck2.rotate_cards(0,"inout")
     deck3.rotate_cards(0,"inout")
     deck4.rotate_cards(0,"inout")
-    print(deck1.player_mode)
 
 
 def click_manage(button:Button,new_winsize):
 
-    global last_played_card
+    global last_played_card, paused_game
     
     if button in [red_button,yellow_button,blue_button,green_button]:
         red_button.kill()
@@ -751,6 +894,7 @@ def click_manage(button:Button,new_winsize):
         green_button.kill()
         dark_background100.kill()
         cancel_wild.kill()
+        keep_wild_card_button.kill()
         pioche_button.liven()
         pioche_fleche.liven()
         if button is red_button:
@@ -768,7 +912,7 @@ def click_manage(button:Button,new_winsize):
         game.card_played(last_played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
         end_of_turn()
 
-    if button is cancel_wild:
+    elif button is cancel_wild:
         deck1.set_interactable(True)
         red_button.kill()
         yellow_button.kill()
@@ -784,7 +928,7 @@ def click_manage(button:Button,new_winsize):
         deck1.shift_cards(assets.CARDS_SORTING_ANIMATION_SECONDS,"inout")
         deck1.rotate_cards(assets.CARDS_SORTING_ANIMATION_SECONDS,"inout")
 
-    if button is pioche_button:
+    elif button is pioche_button:
         deck1.set_interactable(False)
         pioche_button.kill()
         pioche_fleche.kill()
@@ -814,7 +958,7 @@ def click_manage(button:Button,new_winsize):
             deck1.rotate_cards(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS,"inout")
             timers.append(Timer(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS*0.75,"end_of_turn"))
         
-    if button is play_card_button:
+    elif button is play_card_button:
 
         playable_card_box.kill()
         keep_card_button.kill()
@@ -824,6 +968,7 @@ def click_manage(button:Button,new_winsize):
             yellow_button.liven()
             blue_button.liven()
             green_button.liven()
+            keep_wild_card_button.liven()
             dark_background100.liven()
         elif last_played_card.value == "reverse":
             game.card_played(last_played_card,assets.CARD_ATTRACTION_CENTER_PILE_ANIMATION_SECONDS,'out')
@@ -835,11 +980,16 @@ def click_manage(button:Button,new_winsize):
             apply_clrval_to_decks(last_played_card.color,last_played_card.value)
             end_of_turn()
 
-    if button is keep_card_button:
+    elif button is keep_card_button or button is keep_wild_card_button:
 
+        red_button.kill()
+        yellow_button.kill()
+        green_button.kill()
+        blue_button.kill()
         dark_background100.kill()
         playable_card_box.kill()
         keep_card_button.kill()
+        keep_wild_card_button.kill()
         play_card_button.kill()
         deck1.add_card(last_played_card)
         last_played_card.resize(assets.CARDS_ELEVATION_SIZE_RATIO,assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS,"out")
@@ -847,11 +997,27 @@ def click_manage(button:Button,new_winsize):
         deck1.shift_cards(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS,"out")
         deck1.rotate_cards(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS,"inout")
         timers.append(Timer(assets.CARDS_TRAVEL_FROM_DRAW_PILE_ANIMATION_SECONDS*0.65,"end_of_turn"))
+
+    elif button is pause_button:
+        paused_game = True
+        pause_trigger(paused_game)
+
+    elif button is reprendre_button:
+        paused_game = False
+        pause_trigger(paused_game)
+    
+    elif button is sauvegarder_button:
+        pass
+
+    elif button is quitter_button:
+        return 0
         
             
 def appear_splash_titles():
 
     global splash_titles_state
+
+    pause_button.set_hoverable(False)
     splash_titles_state = "appear"
 
     ratio = splash_title1.winsize[0] / assets.BASE_SIZE[0]
@@ -869,6 +1035,8 @@ def appear_splash_titles():
 def disappear_splash_titles():
 
     global splash_titles_state
+
+    pause_button.set_hoverable(True)
     splash_titles_state = "disappear"
 
     ratio = splash_title1.winsize[0] / assets.BASE_SIZE[0]
@@ -923,4 +1091,19 @@ def skip_animation(skip_seconds):
     dark_area.resize([0.25,0.25,1,1,0.25],duree,['linear','inout','linear','inout'],1)
     
 
-    
+def pause_trigger(paused_game):
+
+    if paused_game:
+        reprendre_button.liven()
+        sauvegarder_button.liven()
+        parametres_button.liven()
+        quitter_button.liven()
+        pause_background.liven()
+        pause_button.set_hoverable(False)
+    else:
+        reprendre_button.kill()
+        sauvegarder_button.kill()
+        parametres_button.kill()
+        pause_background.kill()
+        quitter_button.kill()
+        pause_button.set_hoverable(True)

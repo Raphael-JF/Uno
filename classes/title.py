@@ -104,7 +104,7 @@ class Title(Box):
             self.image.blit(text_surface,text_rect)
 
 
-    def update(self,new_winsize,dt,**args):
+    def update(self,new_winsize,dt,*args):
         """Actualisation du sprite ayant lieu à chaque changement image"""
 
         if self.winsize != new_winsize:

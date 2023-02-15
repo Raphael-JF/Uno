@@ -105,7 +105,7 @@ class Image(pygame.sprite.Sprite):
             self.rect = self.image.get_rect(center=pos)
 
 
-    def update(self,new_winsize,**args):
+    def update(self,new_winsize,*args):
         """Actualisation du sprite ayant lieu à chaque changement image"""
 
         if self.winsize != new_winsize:

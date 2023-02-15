@@ -137,12 +137,7 @@ def loop(screen,new_winsize, dt,fps):
 
     hovered_button:Button = (clickable_group.get_sprites_at(cursor) or [None])[-1]
 
-    all_group.update(
-        new_winsize = new_winsize, 
-        dt = dt, 
-        fps = fps,
-        cursor = cursor
-    )
+    all_group.update(new_winsize,dt,fps,cursor)
     to_draw_group.draw(screen)
     pygame.display.flip()
     

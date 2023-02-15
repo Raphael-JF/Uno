@@ -97,7 +97,7 @@ class Splash_title(Box):
             count_height += i.get_height()
 
 
-    def update(self,new_winsize, dt, fps, **args):
+    def update(self,new_winsize, dt, fps, *args):
 
         if self.winsize != new_winsize:
             self.rescale(new_winsize)

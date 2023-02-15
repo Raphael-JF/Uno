@@ -188,7 +188,7 @@ L'objet Box est le widget le plus bas niveau (il n'hérite de rien d'autre que p
             self.rect = self.image.get_rect(center=pos)
 
 
-    def update(self,new_winsize,dt,**args) -> None:
+    def update(self,new_winsize,dt,*args) -> None:
         """Actualisation du sprite ayant lieu à chaque changement image"""
 
         if self.winsize != new_winsize:

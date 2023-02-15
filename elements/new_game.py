@@ -365,12 +365,7 @@ def loop(screen,new_winsize, dt,fps):
             focused_field = field
 
 
-    all_group.update(
-                new_winsize = new_winsize, 
-                dt = dt, 
-                fps = fps,
-                cursor = cursor
-            )
+    all_group.update(new_winsize,dt,fps,cursor)
     to_draw_group.draw(screen)
     pygame.display.flip()
     

@@ -20,17 +20,9 @@ class Manager():
         self.screen_size=itertools.cycle([
             [960,540],
             [1920,1080],
-            
-            
             [800,450],
-            
             [1600,900],
-            
-            
-            
-            
             [480,270],
-            
             ])
         
         #initialisation
@@ -39,6 +31,7 @@ class Manager():
         self.first_start = True
         self.clock = pygame.time.Clock()
         self.first_looping = True
+        self.game_screen = None
 
     
     def tick(self):
@@ -100,10 +93,10 @@ class Manager():
             self.state = "start_menu"
 
     def loop_game(self):
-
         """
         Instructions du menu jeu. action désigne l'action utilisateur (sur quel bouton il a apppuyé et dans quel menu doit il se rendre par conséquent)
         """
+
         if self.first_looping:
             self.first_looping = False
             action = game_elements.loop(self.win,self.current_winsize,self.dt,self.fps,self.game_info)
@@ -113,5 +106,3 @@ class Manager():
         if action == 0:
             importlib.reload(game_elements)
             self.state = "start_menu"
-
-        
