@@ -596,7 +596,7 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
         temp_decks = random.sample(decks,4)
         for i,(name,mode) in enumerate(game_infos.items()):
             temp_decks[i].set_infos(mode,name)
-            temp_decks[i].draw_cards(2,False)
+            temp_decks[i].draw_cards(7,False)
         update_pseudos()
 
     cursor = pygame.mouse.get_pos()
