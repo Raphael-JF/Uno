@@ -597,7 +597,6 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
         for i,(name,mode) in enumerate(game_infos.items()):
             temp_decks[i].set_infos(mode,name)
             temp_decks[i].draw_cards(7,False)
-        update_pseudos()
 
     cursor = pygame.mouse.get_pos()
     hovered_card:Card = (cards_group.get_sprites_at(cursor) or [None])[-1]
@@ -678,13 +677,13 @@ def loop(screen,new_winsize, dt,fps,game_infos = None):
             sys.exit()
         
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button in (pygame.BUTTON_LEFT,pygame.BUTTON_RIGHT) and not splash_title1.alive():
+            if event.button in (pygame.BUTTON_LEFT,pygame.BUTTON_RIGHT) and (not splash_title1.alive() or paused_game):
                 if hovered_card:
                     hovered_card.set_clicking(True)
                 if hovered_button:
                     hovered_button.set_clicking(True)
 
-        if event.type == pygame.MOUSEBUTTONUP and not splash_title1.alive():
+        if event.type == pygame.MOUSEBUTTONUP and (not splash_title1.alive() or paused_game):
             if event.button in (pygame.BUTTON_LEFT,pygame.BUTTON_LEFT):
                 if hovered_card:
                     hovered_card.set_clicking(False)
@@ -766,7 +765,6 @@ def timer_handling(id,infos = None):
 
     if id == "appear_splash_titles":
         swap_decks()
-        update_pseudos()
         appear_splash_titles()
         fleche4.kill()
 
@@ -818,23 +816,6 @@ def timer_handling(id,infos = None):
         pause_background.liven()
         texte_gagant.liven()
 
-
-def update_pseudos():
-
-    if game.clockwise_direction:
-        splash_title2.set_text(deck4.get_infos()[1])
-        pseudo1.set_text(deck4.get_infos()[1])
-        pseudo2.set_text(deck1.get_infos()[1])
-        pseudo3.set_text(deck2.get_infos()[1])
-        pseudo4.set_text(deck3.get_infos()[1])
-    else:
-        splash_title2.set_text(deck2.get_infos()[1])
-        pseudo1.set_text(deck2.get_infos()[1])
-        pseudo2.set_text(deck3.get_infos()[1])
-        pseudo3.set_text(deck4.get_infos()[1])
-        pseudo4.set_text(deck1.get_infos()[1])
-
-
 def swap_decks():
     
     infos1 = deck1.get_infos()
@@ -868,10 +849,11 @@ def swap_decks():
         deck2.set_infos(*infos3)
         deck3.set_infos(*infos4)
         deck4.set_infos(*infos1)
-        pseudo1.set_text(infos2[1])
-        pseudo2.set_text(infos3[1])
-        pseudo3.set_text(infos4[1])
-        pseudo4.set_text(infos1[1])
+    pseudo1.set_text(deck1.player_name)
+    pseudo2.set_text(deck2.player_name)
+    pseudo3.set_text(deck3.player_name)
+    pseudo4.set_text(deck4.player_name)
+    splash_title2.set_text(deck1.player_name)
 
     deck1.shift_cards(0,"inout")
     deck2.shift_cards(0,"inout")
@@ -881,7 +863,7 @@ def swap_decks():
     deck2.rotate_cards(0,"inout")
     deck3.rotate_cards(0,"inout")
     deck4.rotate_cards(0,"inout")
-
+    print(deck1.player_name)
 
 def click_manage(button:Button,new_winsize):
 
