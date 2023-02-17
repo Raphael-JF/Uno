@@ -863,7 +863,6 @@ def swap_decks():
     deck2.rotate_cards(0,"inout")
     deck3.rotate_cards(0,"inout")
     deck4.rotate_cards(0,"inout")
-    print(deck1.player_name)
 
 def click_manage(button:Button,new_winsize):
 
